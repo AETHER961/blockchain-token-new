@@ -1,0 +1,27 @@
+---
+name: Coverage
+"on":
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+jobs:
+    coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repo
+              uses: actions/checkout@v3
+              with:
+                  submodules: recursive
+            - name: Install Node.js
+              uses: actions/setup-node@v3
+            - name: Use env file
+              uses: c-py/action-dotenv-to-setenv@v2
+              with:
+                  env-file: .env.example
+            - name: Install the Node.js dependencies
+              run: npm ci
+            - name: Run Integration Test Coverage
+              run: npm run coverage

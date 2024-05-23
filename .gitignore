@@ -1,0 +1,61 @@
+# dotenv environment variables file
+.env
+
+# typical Hardhat, Foundry, Solcover, and Echidna temp paths
+artifacts
+build
+cache
+coverage
+out
+types
+
+# Deployment related helper files
+deployments
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# forge cache
+forge-cache
+# hardhat cache
+hardhat-cache
+
+# Coverage directory used by tools like istanbul
+coverage
+coverage.json
+coverageEnv
+*.lcov
+
+# Dependency directories
+node_modules
+
+
+# Optional npm cache directory
+.npm
+.npmrc
+
+# Debug log from npm
+npm-debug.log
+
+# Forge docs
+docs
+
+# Forge coverage
+lcov.*
+
+# Benchmark related files
+scripts/config/process/config-parsed.json
+
+# Tenderly project configuration
+tenderly.yaml
+
+# Output of the extracting ABI scripts
+abi

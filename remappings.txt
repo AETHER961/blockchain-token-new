@@ -1,0 +1,5 @@
+agau-common-test/=lib/agau-common/tests/
+agau-common-bridge/=lib/agau-common/contracts/bridge/
+agau-common-management/=lib/agau-common/contracts/tokens-management/
+ds-test/=lib/forge-std/lib/ds-test/src/
+forge-std/=lib/forge-std/src/

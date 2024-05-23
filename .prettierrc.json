@@ -1,0 +1,24 @@
+{
+    "tabWidth": 4,
+    "plugins": ["prettier-plugin-solidity", "solhint-plugin-prettier", "eslint-plugin-prettier"],
+    "overrides": [
+        {
+            "files": "*.sol",
+            "options": {
+                "printWidth": 100,
+                "semi": true,
+                "compiler": "0.8.22"
+            }
+        },
+        {
+            "files": "*.ts",
+            "options": {
+                "arrowParens": "avoid",
+                "bracketSpacing": true,
+                "printWidth": 100,
+                "trailingComma": "all",
+                "endOfLine": "lf"
+            }
+        }
+    ]
+}

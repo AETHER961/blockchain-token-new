@@ -1,0 +1,78 @@
+{
+    "deployments": [
+        {
+            "network": "sepolia",
+            "contracts": [
+                {
+                    "name": "BridgeMediator",
+                    "address": "0xf013a2b6c09BD073C1602416295c7762C2410F33"
+                },
+                {
+                    "name": "MetalToken",
+                    "address": "0xf51Dca4f01eED5Fa75F04ac12Dd4b8E766aD7b6e"
+                },
+                {
+                    "name": "FeesManager",
+                    "address": "0x4f4f5b6B716915998B3607c85F3E232eb1Cff92D"
+                },
+                {
+                    "name": "TokenFactory",
+                    "address": "0x12C7020032D73752512Ecc5cB29229B4Df1CCa0D"
+                },
+                {
+                    "name": "TokenManager",
+                    "address": "0x43aE3F2F662468fBc17120174c397A2FE440fF21"
+                },
+                {
+                    "name": "GoldToken",
+                    "address": "0xB266FDc609E9b5cF078CE29569619fD83790F937"
+                },
+                {
+                    "name": "SilverToken",
+                    "address": "0x27b0e20D142Ab3bD7A85a4aD0711cb2F50BE23dd"
+                },
+                {
+                    "name": "AuthorizationGuard",
+                    "address": "0x2c5d03f8e1EC30Bb0eF1327c623b2A269F51bd12"
+                },
+                {
+                    "name": "MultiSigValidation",
+                    "address": "0x26a94869c790580883f0513fe87086B771056E71"
+                }
+            ]
+        },
+        {
+            "network": "tenderly",
+            "contracts": [
+                {
+                    "name": "BridgeMediator",
+                    "address": "0xD3dD43dc1544717743160D8F3BeAf3F3Ea1eD4a4"
+                },
+                {
+                    "name": "MetalToken",
+                    "address": "0xb0B5120aBec93a1a5EaCFc46bAfBB52E56570E99"
+                },
+                {
+                    "name": "FeesManager",
+                    "address": "0x8C4789FD63D7b7BED5C95542C3555DEA7e1Ac98f"
+                },
+                {
+                    "name": "TokenFactory",
+                    "address": "0x01Ed05c3fb737aDFAA8068b46B84E0a368E634AE"
+                },
+                {
+                    "name": "TokenManager",
+                    "address": "0x00a5D64d4Bd425EEf9A4f940f0BF2502CAE2796a"
+                },
+                {
+                    "name": "GoldToken",
+                    "address": "0x348aCEF5F0f026c3314056E91AC4F51CbbEdB59b"
+                },
+                {
+                    "name": "SilverToken",
+                    "address": "0x1Eed25a38A9DE7b5cF505F049d6B516242397De6"
+                }
+            ]
+        }
+    ]
+}
