@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.22;
 
-// import "@openzeppelin/contracts/access/AccessControl.sol";
-
 import {MultiSigValidation} from "../signature/SignatureValidation.sol";
 import {AuthorizationGuardAccess} from "./roles/AuthorizationGuardAccess.sol";
 import {MetalToken} from "../token/MetalToken.sol";
@@ -11,27 +9,12 @@ import {FeesManager} from "./FeesManager.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {OpsTypes} from "lib/agau-common/admin-ops/OpsTypes.sol";
-// import {
-//     CommonTokenOpMessage,
-//     BurnTokenOpMessage,
-//     TransactionFeeRateOpMessage,
-//     TokenManagementOpMessage,
-//     TokenTransferOpMessage,
-//     CreateFeeDiscountGroupOpMessage,
-//     UpdateFeeDiscountGroupOpMessage,
-//     UserDiscountGroupOpMessage,
-//     FeeAmountRangeOpMessage
-// } from "lib/agau-types/BridgeTypes.sol";
-
 import {BridgeTypes} from "lib/agau-types/BridgeTypes.sol";
-
 import {ITokenManager} from "lib/agau-common/tokens-management/interface/ITokenManager.sol";
 import {IFeesWhitelistManager} from "lib/agau-common/admin-ops/interface/IFeesWhitelistManager.sol";
-
 import {
     ITokenizationRecovery
 } from "lib/agau-common/tokens-management/tokenization/interface/ITokenizationRecovery.sol";
-
 import {
     IRedemptionCallback
 } from "lib/agau-common/tokens-management/redemption/interface/IRedemptionCallback.sol";
@@ -61,44 +44,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     /// @dev mapping for message status
     mapping(bytes32 => bool) private messageExecuted; // added
 
-    // bytes32 public constant DEFAULT_ADMIN_ROLE = keccak256("DEFAULT_ADMIN_ROLE");
-
-    /// @dev Emitted when the `TokenBurnCallbackSend` message is sent
-    /// @param messageId Identifier of the message
-    event TokenBurnCallbackSend(bytes32 indexed messageId);
-
-    /// @dev Emitted when the `fixReleaseTokens` message is sent
-    /// @param fixingMessageId Identifier of the message  that is being fixed
-    /// @param fixMessageId Identifier of the fix message send
-    event FixReleaseTokensMessageSend(
-        bytes32 indexed fixingMessageId,
-        bytes32 indexed fixMessageId
-    );
-
-    /// @dev Emitted when the `fixBurnTokens` message is sent
-    /// @param fixingMessageId Identifier of the message that is being fixed
-    /// @param fixMessageId Identifier of the fix message send
-    event FixBurnTokensMessageSend(bytes32 indexed fixingMessageId, bytes32 indexed fixMessageId);
-
-    /// @dev Emitted when the `fixRefundTokens` message is sent
-    /// @param fixingMessageId Identifier of the message  that is being fixed
-    /// @param fixMessageId Identifier of the fix message send
-    event FixRefundTokensMessageSend(bytes32 indexed fixingMessageId, bytes32 indexed fixMessageId);
-
-    /// @dev Emitted when message for fixing admin operation is send
-    /// @param opType Operation type
-    /// @param fixingMessageId Message identifier of the fixed messsage
-    /// @param fixMessageId Message identifier of the send fix message
-    event OpFixMessageSend(
-        OpsTypes.OpType indexed opType,
-        bytes32 indexed fixingMessageId,
-        bytes32 indexed fixMessageId
-    );
-
-    /// @dev Triggered when message with `messageId` is not executed
-    /// @param messageId Identifier of the message
-    error MessageNotExecuted(bytes32 messageId);
-
     /// @param tokenFactory_ The address of `TokenFactory` contract
     /// @param feesManager_ The address of `FeesManager` contract
     constructor(
@@ -111,7 +56,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     ) {
         _tokenFactory = TokenFactory(tokenFactory_);
         _feesManager = FeesManager(feesManager_);
-        // _authorizationGuard = AuthorizationGuard(authorizationGuardAddress_);
         _multiSigValidation = MultiSigValidation(multiSigValidationAddress_);
 
         __AuthorizationGuardAccess_init(authorizationGuardAddress_);
@@ -122,31 +66,10 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         BridgeTypes.CommonTokenOpMessage[] calldata messages
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < messages.length; ++i) {
-            bytes32 _hash = keccak256(
-                abi.encodePacked(
-                    "mintAndLockTokens",
-                    messages[i].account,
-                    messages[i].weight,
-                    messages[i].metalId
-                )
-            );
-            bytes32 prefixedHash = keccak256(
-                abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash)
-            );
-            require(prefixedHash == messages[i].signatureHash, "Invalid hash");
-
-            // Validate submitted signatures using the MultiSigValidation contract
-            require(
-                _multiSigValidation.validateSignatures(
-                    prefixedHash,
-                    messages[i].signatures,
-                    messages[i].roleIndices
-                ),
-                "Invalid signatures"
-            );
-
-            MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
-            token.mintAndLock(messages[i].account, toTokenAmount(token, messages[i].weight));
+            if (_multiSigValidation.verifyCommonOpSignature("mintAndLockTokens", messages[i])) {
+                MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
+                token.mintAndLock(messages[i].account, toTokenAmount(token, messages[i].weight));
+            }
         }
     }
 
@@ -155,8 +78,10 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         BridgeTypes.CommonTokenOpMessage[] calldata messages
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < messages.length; ++i) {
-            MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
-            token.release(messages[i].account, toTokenAmount(token, messages[i].weight));
+            if (_multiSigValidation.verifyCommonOpSignature("releaseTokens", messages[i])) {
+                MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
+                token.release(messages[i].account, toTokenAmount(token, messages[i].weight));
+            }
         }
     }
 
@@ -170,24 +95,15 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         }
     }
 
-    // /// @dev Sends message to execute `onTokensBurned` callback on the other side of the bridge
-    // ///      Emits `TokenBurnCallbackSend` event
-    // /// @param messageId Identifier of the message resulting in tokens burn
-    // function executeBurnTokensCallback(bytes32 messageId) external {
-    //     if (!messageExecuted[messageId]) revert MessageNotExecuted(messageId);
-    //     // Sending a callback to the other side of the bridge
-    //     _sendMessage(abi.encodeCall(IRedemptionCallback.onTokensBurned, messageId));
-
-    //     emit TokenBurnCallbackSend(messageId);
-    // }
-
     /// @inheritdoc ITokenManager
     function refundTokens(
         BridgeTypes.CommonTokenOpMessage[] calldata messages
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < messages.length; ++i) {
-            MetalToken token = _tokenFactory.tokenForId(messages[0].metalId);
-            token.safeTransfer(messages[i].account, toTokenAmount(token, messages[i].weight));
+            if (_multiSigValidation.verifyCommonOpSignature("refundTokens", messages[i])) {
+                MetalToken token = _tokenFactory.tokenForId(messages[0].metalId);
+                token.safeTransfer(messages[i].account, toTokenAmount(token, messages[i].weight));
+            }
         }
     }
 
@@ -257,57 +173,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     ) external onlyAuthorizedAccess {
         _feesManager.setMinAndMaxTxFee(message.minimumAmount, message.maximumAmount);
     }
-
-    // /// @dev Fixes `releaseTokens` message on L2 in case of the execution failure
-    // ///      Emits `FixReleaseTokensMessageSend` event
-    // /// @param messageId Identifier of the message on this side of the bridge to fix
-    // function fixReleaseTokensMessage(bytes32 messageId) external {
-    //     _revertIfMessageNotFixable(messageId);
-
-    //     bytes32 sendMessageId = _sendMessage(
-    //         abi.encodeCall(ITokenizationRecovery.fixReleaseTokensMessage, messageId)
-    //     );
-
-    //     emit FixReleaseTokensMessageSend(messageId, sendMessageId);
-    // }
-
-    // /// @dev Fixes `burnTokens` message on L2 in case of the execution failure
-    // ///      Emits `FixBurnTokensMessageSend` event
-    // /// @param messageId Identifier of the message on this side of the bridge to fix
-    // function fixBurnTokensMessage(bytes32 messageId) external {
-    //     _revertIfMessageNotFixable(messageId);
-
-    //     bytes32 sendMessageId = _sendMessage(
-    //         abi.encodeCall(IRedemptionRecovery.fixBurnTokensMessage, messageId)
-    //     );
-
-    //     emit FixBurnTokensMessageSend(messageId, sendMessageId);
-    // }
-
-    // /// @dev Fixes `refundTokens` message on L2 in case of the execution failure
-    // ///      Emits `FixRefundTokensMessageSend` event
-    // /// @param messageId Identifier of the message on this side of the bridge to fix
-    // function fixRefundTokensMessage(bytes32 messageId) external {
-    //     _revertIfMessageNotFixable(messageId);
-
-    //     bytes32 sendMessageId = _sendMessage(
-    //         abi.encodeCall(IRedemptionRecovery.fixRefundTokensMessage, messageId)
-    //     );
-
-    //     emit FixRefundTokensMessageSend(messageId, sendMessageId);
-    // }
-
-    // /// @dev Fixes admin operation message on L2 in case of the execution failure
-    // ///      Emits `OpFixMessageSend` event
-    // /// @param opType Operation type
-    // /// @param messageId Identifier of the message on this side of the bridge to fix
-    // function fixOpsMessage(OpsTypes.OpType opType, bytes32 messageId) external {
-    //     _revertIfMessageNotFixable(messageId);
-
-    //     bytes32 sendMessageId = _sendMessage(abi.encodeCall(IOpsRecovery.fixMessage, messageId));
-
-    //     emit OpFixMessageSend(opType, messageId, sendMessageId);
-    // }
 
     /// @dev Returns the address of the `TokenFactory` contract
     /// @return `TokenFactory` contract address
