@@ -1,5 +1,5 @@
 import "@nomiclabs/hardhat-solhint";
-
+// import "hardhat-console";
 import "hardhat-preprocessor";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
@@ -8,11 +8,14 @@ import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/ta
 import { HardhatUserConfig, subtask } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
 
+
 import { resolve } from "path";
 import * as toml from "toml";
 import * as dotenv from "dotenv";
 import * as tenderly from "@tenderly/hardhat-tenderly";
 import fs from "fs";
+
+import "./tasks/mintAndLockTokens";
 
 // Automatically verify contracts on Tenderly after deployment
 export const TENDERLY_AUTO_VERIFY: boolean =
@@ -183,5 +186,7 @@ const config: HardhatUserConfig = {
         outDir: `types`,
     },
 };
+
+
 
 export default config;

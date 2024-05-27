@@ -19,6 +19,66 @@
       "address": "0x4f4f5b6B716915998B3607c85F3E232eb1Cff92D",
       "txHash": "0xd29853f8bac8ee5cc06e385cc7ca983a8bfbdfb316c88a9e605843ff27df52b9",
       "kind": "transparent"
+    },
+    {
+      "address": "0xD4A409024E9c2C38358a2e9eFd50e79Da846e116",
+      "txHash": "0xdf115502859f2d079ff3fbe300e7944ca28a87bdf1758ca5758c7dc456810584",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3A7C831c76bbe9A2Ed5cbB423D589597ce8d21dC",
+      "txHash": "0x8c6c5b06c996c9c7c02dce0a9e9a5343d554390e14d0ba1c0f3dd9c91d6ffe9b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xdF05cA3c2B839273f2014563119592A8BcCC2Abd",
+      "txHash": "0x8cf852f6afdc9b2bebe76e75e4b64dc306eb00a7224a179c8385e6c7b39349d3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4ae461Da014E0A3646649094070bFbC93802Cb37",
+      "txHash": "0x61e03ee911425d5a000addd77e7c80887c4a2b6dd4ee29d8fe8b9004b09f0da6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xbE89Cb0522D3C105A6FA063eC0a0EDc32FB5e3fB",
+      "txHash": "0xf146c6b9bbd4fb4c021ba89ccd0c85068aeb58dad0b53149c3330919c9d23408",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x721a27a299Eaf09930b479D32348Ec282E3f8bAe",
+      "txHash": "0x664ffbe11e90323150d9247788056d916d45e240ec5ad8dc5d5e50441c302fe1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x443C623eCE8841598eC84F8CCFC1bF3C579e6BfC",
+      "txHash": "0x091ddfcb21f8cecd8049c289d547acefc163bc89799dd95278a6310e936b3d7f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5678E428eF82F512a0C377e2d651f6E1e8a9E100",
+      "txHash": "0x08c64d70670a975160d668906f15589e85f138f7872edbf1ac29fc6bd967aaa0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x440EC5FFd3b3D132D848efA9A116984074515d45",
+      "txHash": "0x5bcfb0981afab101a1893fef1454335dbd5ec99b743dbadda9b78d0af1b731f0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8559673801EaedBaa96b7F7Bfa49797f69059BB4",
+      "txHash": "0x88e28166c0077a0fc3e6888d61487c1e470a1417c1c4e5a36c8b290440360903",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9b17f4E79BA06127b33A574e07066eE75CE109c7",
+      "txHash": "0xd25bd436167a30ff861219ff50d4e944ece3301bc583163182a894986423c0d3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8218DA8Dc1d861A4E054D277ba23546494655eCc",
+      "txHash": "0xe5beefcc1ca40b27538149fb04ae90e8cb0387a8e0fcdc2874a5569f0be8f3da",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -911,6 +971,1047 @@
           }
         },
         "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "ef939db176c7779b080b4004ffd77a6d5b448e9aa84f07dc65472c1e9a72da7f": {
+      "address": "0xB01B191B19004332466B67FB8b5A1dE5B6a1e2EC",
+      "txHash": "0x1dac6cb9cb15ed05642128f9ef14e27cc320eb88420be1ac48821ca7f893b308",
+      "layout": {
+        "solcVersion": "0.8.22",
+        "storage": [
+          {
+            "label": "_lockedBalance",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "TokensLockable",
+            "src": "contracts/token/extensions/TokensLockable.sol:15"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AuthorizationGuard)5087",
+            "contract": "TokensLockable",
+            "src": "contracts/token/extensions/TokensLockable.sol:17"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(AuthorizationGuard)5087",
+            "contract": "AuthorizationGuardAccess",
+            "src": "contracts/management/roles/AuthorizationGuardAccess.sol:9"
+          },
+          {
+            "label": "_feesManager",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(FeesManager)3481",
+            "contract": "MetalToken",
+            "src": "contracts/token/MetalToken.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC20Storage)66_storage": {
+            "label": "struct ERC20Upgradeable.ERC20Storage",
+            "members": [
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_allowances",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_totalSupply",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(AuthorizationGuard)5087": {
+            "label": "contract AuthorizationGuard",
+            "numberOfBytes": "20"
+          },
+          "t_contract(FeesManager)3481": {
+            "label": "contract FeesManager",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ERC20": [
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_allowances",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:40",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_totalSupply",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:42",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:44",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:45",
+              "offset": 0,
+              "slot": "4"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "e89abd72e6d1ded7cd9bcb8c9dc3509988930aa8a79b4f51262846c29ade7837": {
+      "address": "0xBE75bC7BE02fb827042b369a0b8Ab86d469F0ea6",
+      "txHash": "0x8c795c8c31af1a752b15c651c52ad1182d7ba677b19312d1a8ea8c5bc3b35c56",
+      "layout": {
+        "solcVersion": "0.8.22",
+        "storage": [
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(AuthorizationGuard)5087",
+            "contract": "AuthorizationGuardAccess",
+            "src": "contracts/management/roles/AuthorizationGuardAccess.sol:9"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AuthorizationGuard)5087",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:24"
+          },
+          {
+            "label": "_groupCount",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_enum(GroupType)14609,t_uint256)",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:27"
+          },
+          {
+            "label": "_feeDiscounts",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_enum(GroupType)14609,t_mapping(t_uint256,t_struct(Discount)14605_storage))",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:29"
+          },
+          {
+            "label": "_userToGroup",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_enum(GroupType)14609,t_mapping(t_address,t_uint256))",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:32"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:282"
+          },
+          {
+            "label": "_txFeeRate",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_uint256",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:18"
+          },
+          {
+            "label": "_minTxFee",
+            "offset": 0,
+            "slot": "53",
+            "type": "t_uint256",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:20"
+          },
+          {
+            "label": "_maxTxFee",
+            "offset": 0,
+            "slot": "54",
+            "type": "t_uint256",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:22"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "55",
+            "type": "t_contract(AuthorizationGuard)5087",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:24"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "56",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:145"
+          },
+          {
+            "label": "_feesWallet",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_address",
+            "contract": "FeesManager",
+            "src": "contracts/management/FeesManager.sol:26"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)47_storage": {
+            "label": "uint256[47]",
+            "numberOfBytes": "1504"
+          },
+          "t_contract(AuthorizationGuard)5087": {
+            "label": "contract AuthorizationGuard",
+            "numberOfBytes": "20"
+          },
+          "t_enum(DiscountType)14614": {
+            "label": "enum WhitelistTypes.DiscountType",
+            "members": [
+              "None",
+              "FlatPercentFee",
+              "PercentDiscount"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(GroupType)14609": {
+            "label": "enum WhitelistTypes.GroupType",
+            "members": [
+              "None",
+              "TxFee"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(GroupType)14609,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(enum WhitelistTypes.GroupType => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(GroupType)14609,t_mapping(t_uint256,t_struct(Discount)14605_storage))": {
+            "label": "mapping(enum WhitelistTypes.GroupType => mapping(uint256 => struct WhitelistTypes.Discount))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(GroupType)14609,t_uint256)": {
+            "label": "mapping(enum WhitelistTypes.GroupType => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Discount)14605_storage)": {
+            "label": "mapping(uint256 => struct WhitelistTypes.Discount)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Discount)14605_storage": {
+            "label": "struct WhitelistTypes.Discount",
+            "members": [
+              {
+                "label": "discountType",
+                "type": "t_enum(DiscountType)14614",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "value",
+                "type": "t_uint248",
+                "offset": 1,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint248": {
+            "label": "uint248",
+            "numberOfBytes": "31"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "d0b92f41e973dcf56a4aad657b08922b828587a327049420340422f10c9a2dce": {
+      "address": "0xbe39AE1e7d4Dd3AA56D5F351256DC83FdED5E96c",
+      "txHash": "0x1c37dc8c5cbe994ea0cb8e7f81bcc780fc58581e079e77df7290d75a9f50d981",
+      "layout": {
+        "solcVersion": "0.8.22",
+        "storage": [
+          {
+            "label": "_lockedBalance",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "TokensLockable",
+            "src": "contracts/token/extensions/TokensLockable.sol:15"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AuthorizationGuard)5097",
+            "contract": "TokensLockable",
+            "src": "contracts/token/extensions/TokensLockable.sol:17"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(AuthorizationGuard)5097",
+            "contract": "AuthorizationGuardAccess",
+            "src": "contracts/management/roles/AuthorizationGuardAccess.sol:9"
+          },
+          {
+            "label": "_feesManager",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(FeesManager)3481",
+            "contract": "MetalToken",
+            "src": "contracts/token/MetalToken.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC20Storage)66_storage": {
+            "label": "struct ERC20Upgradeable.ERC20Storage",
+            "members": [
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_allowances",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_totalSupply",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(AuthorizationGuard)5097": {
+            "label": "contract AuthorizationGuard",
+            "numberOfBytes": "20"
+          },
+          "t_contract(FeesManager)3481": {
+            "label": "contract FeesManager",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ERC20": [
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_allowances",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:40",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_totalSupply",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:42",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:44",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:45",
+              "offset": 0,
+              "slot": "4"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "6cad2d11a6f0c4e275b9b098411871ca70290cb7d8dae98f7d2704304d76d1c2": {
+      "address": "0x133C21c82E6898f3385d6601B7123a2540EF2462",
+      "txHash": "0xd2906c6e4843691550dd8ed1679300132ecc6f8680fdb4cf5c502290e5fd0bb4",
+      "layout": {
+        "solcVersion": "0.8.22",
+        "storage": [
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(AuthorizationGuard)5097",
+            "contract": "AuthorizationGuardAccess",
+            "src": "contracts/management/roles/AuthorizationGuardAccess.sol:9"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AuthorizationGuard)5097",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:24"
+          },
+          {
+            "label": "_groupCount",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_enum(GroupType)14652,t_uint256)",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:27"
+          },
+          {
+            "label": "_feeDiscounts",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_enum(GroupType)14652,t_mapping(t_uint256,t_struct(Discount)14648_storage))",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:29"
+          },
+          {
+            "label": "_userToGroup",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_enum(GroupType)14652,t_mapping(t_address,t_uint256))",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:32"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "FeesWhitelist",
+            "src": "contracts/management/fees/FeesWhitelist.sol:282"
+          },
+          {
+            "label": "_txFeeRate",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_uint256",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:18"
+          },
+          {
+            "label": "_minTxFee",
+            "offset": 0,
+            "slot": "53",
+            "type": "t_uint256",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:20"
+          },
+          {
+            "label": "_maxTxFee",
+            "offset": 0,
+            "slot": "54",
+            "type": "t_uint256",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:22"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "55",
+            "type": "t_contract(AuthorizationGuard)5097",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:24"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "56",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "TxFeeManager",
+            "src": "contracts/management/fees/TxFeeManager.sol:145"
+          },
+          {
+            "label": "_feesWallet",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_address",
+            "contract": "FeesManager",
+            "src": "contracts/management/FeesManager.sol:26"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)47_storage": {
+            "label": "uint256[47]",
+            "numberOfBytes": "1504"
+          },
+          "t_contract(AuthorizationGuard)5097": {
+            "label": "contract AuthorizationGuard",
+            "numberOfBytes": "20"
+          },
+          "t_enum(DiscountType)14657": {
+            "label": "enum WhitelistTypes.DiscountType",
+            "members": [
+              "None",
+              "FlatPercentFee",
+              "PercentDiscount"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(GroupType)14652": {
+            "label": "enum WhitelistTypes.GroupType",
+            "members": [
+              "None",
+              "TxFee"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(GroupType)14652,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(enum WhitelistTypes.GroupType => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(GroupType)14652,t_mapping(t_uint256,t_struct(Discount)14648_storage))": {
+            "label": "mapping(enum WhitelistTypes.GroupType => mapping(uint256 => struct WhitelistTypes.Discount))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_enum(GroupType)14652,t_uint256)": {
+            "label": "mapping(enum WhitelistTypes.GroupType => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Discount)14648_storage)": {
+            "label": "mapping(uint256 => struct WhitelistTypes.Discount)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Discount)14648_storage": {
+            "label": "struct WhitelistTypes.Discount",
+            "members": [
+              {
+                "label": "discountType",
+                "type": "t_enum(DiscountType)14657",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "value",
+                "type": "t_uint248",
+                "offset": 1,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint248": {
+            "label": "uint248",
+            "numberOfBytes": "31"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "20a261355efd1f258636add1da92f7562976c23cae15f051b6f04b4ee9f552f0": {
+      "address": "0x622f9db8d0DE441d5cB78a5DdA4d8ad98031746a",
+      "txHash": "0x7107ad27938e6c2e2da7a6ca0d39753602c4c617cc65244dd2c8f61519f4bbba",
+      "layout": {
+        "solcVersion": "0.8.22",
+        "storage": [
+          {
+            "label": "_lockedBalance",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "TokensLockable",
+            "src": "contracts/token/extensions/TokensLockable.sol:15"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AuthorizationGuard)5189",
+            "contract": "TokensLockable",
+            "src": "contracts/token/extensions/TokensLockable.sol:17"
+          },
+          {
+            "label": "_authorizationGuard",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(AuthorizationGuard)5189",
+            "contract": "AuthorizationGuardAccess",
+            "src": "contracts/management/roles/AuthorizationGuardAccess.sol:9"
+          },
+          {
+            "label": "_feesManager",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(FeesManager)3481",
+            "contract": "MetalToken",
+            "src": "contracts/token/MetalToken.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC20Storage)66_storage": {
+            "label": "struct ERC20Upgradeable.ERC20Storage",
+            "members": [
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_allowances",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_totalSupply",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(AuthorizationGuard)5189": {
+            "label": "contract AuthorizationGuard",
+            "numberOfBytes": "20"
+          },
+          "t_contract(FeesManager)3481": {
+            "label": "contract FeesManager",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ERC20": [
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_allowances",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:40",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_totalSupply",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:42",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:44",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:45",
+              "offset": 0,
+              "slot": "4"
+            }
+          ],
           "erc7201:openzeppelin.storage.Initializable": [
             {
               "contract": "Initializable",

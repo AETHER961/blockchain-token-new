@@ -2,7 +2,12 @@
     "ts-node": {
         "files": true
     },
-    "include": ["scripts/**/*.ts", "types/**/*.ts", "tests/ts/**/*.ts"],
+    "include": [
+        "scripts/**/*.ts",
+        "types/**/*.ts",
+        "tests/ts/**/*.ts",
+        "tasks/**/*.ts",
+    ],
     "exclude": [
         "./artifacts",
         "./artifacts-zk",
@@ -15,7 +20,10 @@
         "./media",
         "./node_modules"
     ],
-    "files": [".eslintrc.js", "./hardhat.config.ts"],
+    "files": [
+        ".eslintrc.js",
+        "./hardhat.config.ts"
+    ],
     "compilerOptions": {
         /* Visit https://aka.ms/tsconfig.json to read more about this file */
         //
