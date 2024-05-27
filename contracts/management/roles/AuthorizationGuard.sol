@@ -12,6 +12,9 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract AuthorizationGuard is AccessControl {
     // bytes32 public constant override DEFAULT_ADMIN_ROLE = keccak256("DEFAULT_ADMIN_ROLE");
     bytes32 public constant AUTHORIZED_ROLE = keccak256("AUTHORIZED_ROLE");
+    event LogAddress(string name, address logAddress);
+
+    mapping(address => bool) private trustedContracts_;
 
     constructor(address[] memory admins, address[] memory authorizedAccounts) {
         /// Assign admin roles to admin accounts
@@ -35,6 +38,24 @@ contract AuthorizationGuard is AccessControl {
         _;
     }
 
+    modifier onlyTrustedContracts() {
+        require(trustedContracts_[msg.sender], "Caller not trusted");
+        _;
+    }
+
+    function setTrusted(
+        address[] memory addresses,
+        bool[] memory isTrusted
+    ) public onlyAdminAccess {
+        require(addresses.length == isTrusted.length, "Addresses and switch arrays mismatch");
+        for (uint8 i = 0; i < addresses.length; i++) {
+            trustedContracts_[addresses[i]] = isTrusted[i];
+        }
+    }
+
+    function isTrustedContract(address targetAddress) external view returns (bool) {
+        return trustedContracts_[targetAddress];
+    }
     function setAuthorized(address account, bool status) external onlyAdminAccess {
         if (status) {
             grantRole(AUTHORIZED_ROLE, account);

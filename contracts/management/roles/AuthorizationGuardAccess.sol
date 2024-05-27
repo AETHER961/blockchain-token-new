@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.22;
+import "hardhat/console.sol";
 
 import {AuthorizationGuard} from "./AuthorizationGuard.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 abstract contract AuthorizationGuardAccess is Initializable {
     AuthorizationGuard private _authorizationGuard;
+
+    event LogAddress(string name, address logAddress);
 
     modifier onlyAdminAccess() {
         require(
@@ -20,6 +23,11 @@ abstract contract AuthorizationGuardAccess is Initializable {
             _authorizationGuard.hasRole(_authorizationGuard.AUTHORIZED_ROLE(), msg.sender),
             "Caller is not authorized"
         );
+        _;
+    }
+
+    modifier onlyTrustedContracts() {
+        require(_authorizationGuard.isTrustedContract(msg.sender), "Caller is not trusted");
         _;
     }
 
