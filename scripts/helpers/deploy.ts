@@ -218,7 +218,7 @@ export async function deployAuthorizationGuard(
     const authorizationGuardContract = await deployWait(
         authorizationGuard.deploy(
             constructorArgs.adminAddresses,
-            constructorArgs.authorizedAccounts
+            constructorArgs.authorizedAccounts,
         ),
     );
 
@@ -262,6 +262,5 @@ export async function deployMultiSigValidation(
         constructorArgs,
     );
 
-    console.log(`multisig cont`, multiSigValidationContract)
     return multiSigValidationContract;
 }

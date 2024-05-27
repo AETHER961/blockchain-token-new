@@ -19,6 +19,7 @@ const adminAddresses = [
     feesWallet,
 ];
 
+// backend wallet(s)
 const authorizedAdmins = [
     feesWallet,
     "0xafCa393205656Ca3B60B8BA31EFA225d5B72A726",
@@ -65,11 +66,20 @@ export const fullDeploy = async (): Promise<void> => {
     // console.log(`Admins:`, adminAddresses);
     // console.log(`authriied:`, authorizedAdmins);
 
+    // Deploy `FeesManager` proxy
+    const expectedTokenManagerAddress1 = ethers.getCreateAddress({
+        from: deployerAddr,
+        // +3 as current nonce +2 (sum +3) is for `FeesManager` deployment and +1 is for `TokenFactory` deployment
+        nonce: (await deployer.getNonce()) + 3,
+    });
+
+    console.log(`Expected token Manager:1`, expectedTokenManagerAddress1);
     // Deploy `authorizationGuard`
     const authorizationGuard = await trackDeployment(
         () => deployment.deployAuthorizationGuard(deployer, {
             adminAddresses,
-            authorizedAccounts: authorizedAdmins
+            authorizedAccounts: authorizedAdmins,
+            // trustedContracts: [expectedTokenManagerAddress1]
         }),
         `AuthorizationGuard`,
     );
@@ -105,12 +115,16 @@ export const fullDeploy = async (): Promise<void> => {
         // +3 as current nonce +2 (sum +3) is for `FeesManager` deployment and +1 is for `TokenFactory` deployment
         nonce: (await deployer.getNonce()) + 3,
     });
+
+    console.log(`Expected token Manager:2`, expectedTokenManagerAddress);
+    const feeRate = getFeeRate();
+    console.log(`fee rate:`, feeRate)
     const feeWallet = getFeeWallet();
     const feesManagerProxy = await trackDeployment(
         () =>
             deployment.deployFeesManager(deployer, {
                 feeWallet: feeWallet,
-                txFeeRate: getFeeRate(),
+                txFeeRate: feeRate,
                 minTxFee: 0n,
                 maxTxFee: ethers.MaxUint256,
                 zeroFeeAccounts: [feeWallet, expectedTokenManagerAddress],
@@ -152,6 +166,12 @@ export const fullDeploy = async (): Promise<void> => {
 
     console.log(`TokenManager deployed at ${tokenManager.target}`);
 
+    const addTrustedTx = await authorizationGuard.setTrusted([tokenManager.target], [true]);
+    const trustedTxReceipt = await addTrustedTx.wait();
+
+    if (trustedTxReceipt) {
+        console.log(`Added Token Manager to trusted contracts.`, trustedTxReceipt)
+    }
 
     // In case of testnet deployment, verify the proxy and beacon contracts on Tenderly
     if (testnetDeployment) {
