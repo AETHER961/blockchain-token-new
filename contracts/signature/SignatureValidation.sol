@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-// import {AuthorizationGuard} from "../management/roles/AuthorizationGuard.sol";
+import {AuthorizationGuard} from "../management/roles/AuthorizationGuard.sol";
 import {AuthorizationGuardAccess} from "../management/roles/AuthorizationGuardAccess.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {BridgeTypes} from "lib/agau-types/BridgeTypes.sol";
 
 /*
     * Deploy this contract second.
@@ -20,8 +21,9 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
     Role[] public roles;
     uint256 public requiredSignatures;
+    uint256 public nonce;
 
-    // AuthorizationGuard private authorizationGuard;
+    AuthorizationGuard private _authorizationGuard;
 
     // uint256 public tokensToMint;
     mapping(bytes32 => mapping(uint256 => bool)) public signatures;
@@ -44,8 +46,11 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         address[] memory _signers,
         string[] memory _roleNames
     ) {
+        nonce = 0;
         requiredSignatures = _requiredSignatures;
         __AuthorizationGuardAccess_init(_authorizationGuardAddress);
+
+        _authorizationGuard = AuthorizationGuard(_authorizationGuardAddress);
 
         require(_signers.length == _roleNames.length, "Mismatching signers and roles lengths");
 
@@ -55,11 +60,31 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         }
     }
 
+    function verifyCommonOpSignature(
+        string memory functionName,
+        BridgeTypes.CommonTokenOpMessage memory message
+    ) external onlyTrustedContracts returns (bool) {
+        bytes32 _hash = keccak256(
+            abi.encodePacked(functionName, message.account, message.weight, message.metalId, nonce)
+        );
+        bytes32 prefixedHash = keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash)
+        );
+        require(prefixedHash == message.signatureHash, "Invalid hash");
+
+        bool isValid = validateSignatures(prefixedHash, message.signatures, message.roleIndices);
+
+        // Ensure that the validation was successful
+        require(isValid, "Invalid signatures");
+
+        return true;
+    }
+
     function validateSignatures(
         bytes32 _hash,
         bytes[] memory signaturesArray,
         uint256[] memory roleIndices
-    ) public onlyAuthorizedAccess returns (bool) {
+    ) internal returns (bool) {
         require(signaturesArray.length == requiredSignatures, "Not enough signatures");
         require(!usedHashes[_hash], "Hash has already been used for minting");
 
@@ -79,6 +104,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
         // Mark the hash as used
         usedHashes[_hash] = true;
+        nonce++;
 
         return true;
     }
