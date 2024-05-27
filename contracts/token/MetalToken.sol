@@ -51,7 +51,7 @@ contract MetalToken is Initializable, ERC20Upgradeable, TokensLockable, Authoriz
     ///      Callable only by authorized accounts
     /// @param to Receiver address
     /// @param amount Amount of the tokens to mint
-    function mintAndLock(address to, uint256 amount) external onlyAuthorizedAccess {
+    function mintAndLock(address to, uint256 amount) external onlyTrustedContracts {
         _addLockedBalance(to, amount);
         _mint(to, amount);
     }
@@ -60,7 +60,7 @@ contract MetalToken is Initializable, ERC20Upgradeable, TokensLockable, Authoriz
     ///      Callable only by authorized accounts
     /// @param to Token owner address
     /// @param amount Amount of the tokens to release
-    function release(address to, uint256 amount) external onlyAuthorizedAccess {
+    function release(address to, uint256 amount) external onlyTrustedContracts {
         _subLockedBalance(to, amount);
     }
 
@@ -68,7 +68,7 @@ contract MetalToken is Initializable, ERC20Upgradeable, TokensLockable, Authoriz
     ///      Callable only by authorized accounts
     /// @param from Token owner address
     /// @param amount Amount of the tokens to burn
-    function burn(address from, uint256 amount) external onlyAuthorizedAccess {
+    function burn(address from, uint256 amount) external onlyTrustedContracts {
         _burn(from, amount);
     }
 
@@ -77,7 +77,7 @@ contract MetalToken is Initializable, ERC20Upgradeable, TokensLockable, Authoriz
     /// @param from Token owner address
     /// @param to Receiver address
     /// @param amount Amount of the tokens to seize
-    function seizeLocked(address from, address to, uint256 amount) external onlyAuthorizedAccess {
+    function seizeLocked(address from, address to, uint256 amount) external onlyTrustedContracts {
         _subLockedBalance(from, amount);
         super._transfer(from, to, amount);
     }
