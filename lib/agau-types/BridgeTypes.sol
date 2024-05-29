@@ -14,9 +14,10 @@ library BridgeTypes {
         // Account address message is referred to
         address account;
         // Total amount of the metal (in grams)
-        uint48 weight;
+        uint256 weight;
         // Metal identifier
         uint8 metalId;
+        string documentHash;
         // Message Hash
         bytes32 signatureHash;
         // Submitted signatures
