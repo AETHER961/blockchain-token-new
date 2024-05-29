@@ -16,7 +16,11 @@ contract AuthorizationGuard is AccessControl {
 
     mapping(address => bool) private trustedContracts_;
 
-    constructor(address[] memory admins, address[] memory authorizedAccounts) {
+    constructor(
+        address[] memory admins,
+        address[] memory authorizedAccounts,
+        address[] memory trustedContractAddresses
+    ) {
         /// Assign admin roles to admin accounts
         for (uint256 i = 0; i < admins.length; i++) {
             _grantRole(DEFAULT_ADMIN_ROLE, admins[i]);
@@ -26,6 +30,13 @@ contract AuthorizationGuard is AccessControl {
         for (uint256 i = 0; i < authorizedAccounts.length; i++) {
             _grantRole(AUTHORIZED_ROLE, authorizedAccounts[i]);
         }
+
+        bool[] memory isTrusted = new bool[](trustedContractAddresses.length);
+        for (uint256 i = 0; i < trustedContractAddresses.length; i++) {
+            isTrusted[i] = true;
+        }
+
+        setTrusted(trustedContractAddresses, isTrusted);
     }
 
     modifier onlyAdminAccess() {
