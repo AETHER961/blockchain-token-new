@@ -205,6 +205,7 @@ async function onSuccessfulContractDeployment(
 export interface AuthorizationGuardConstructorArgs {
     adminAddresses: AddressLike[];
     authorizedAccounts: AddressLike[];
+    trustedContracts: AddressLike[];
     [key: string]: AddressLike[];
 }
 
@@ -219,6 +220,7 @@ export async function deployAuthorizationGuard(
         authorizationGuard.deploy(
             constructorArgs.adminAddresses,
             constructorArgs.authorizedAccounts,
+            constructorArgs.trustedContracts
         ),
     );
 
