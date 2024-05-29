@@ -23,21 +23,27 @@ const signers = [
 const account = '0x4bCcF85a1F9d1814f5493FAb068f338dF0aC0518';
 const weight = 1; // uint48
 const metalId = 0; // uint8
-const nonce = 0;
+// const nonce = 0;
 
 // Create the message hash
-function hashMessageMintAndLockTokens(account: string, weight: number, metalId: number, nonce: number) {
+function hashMessageMintAndLockTokens(account: string, weight: number, metalId: number
+    // , nonce: number
+) {
     const abiCoder = new ethers.AbiCoder();
     return ethers.solidityPackedKeccak256(
         // abiCoder.encode(
         ['string', 'address', 'uint48', 'uint8', 'uint256'],
-        ['mintAndLockTokens', account, weight, metalId, nonce]
+        ['mintAndLockTokens', account, weight, metalId
+            // , nonce
+        ]
         // )
     );
 }
 
 // Create the message hash
-const messageHash = hashMessageMintAndLockTokens(account, weight, metalId, nonce);
+const messageHash = hashMessageMintAndLockTokens(account, weight, metalId
+    // , nonce
+);
 console.log('Message Hash:', messageHash);
 
 // Sign the message hash using `eth_personalSign`
