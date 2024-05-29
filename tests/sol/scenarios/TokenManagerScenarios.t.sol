@@ -16,7 +16,7 @@ import {
     FeeAmountRangeOpMessage,
     UpdateFeeDiscountGroupOpMessage,
     UserDiscountGroupOpMessage
-} from "agau-common-bridge/BridgeTypes.sol";
+} from "agau-common-bridge/TokenOpTypes.sol";
 import {DiscountType, Discount} from "agau-common/admin-ops/WhitelistTypes.sol";
 
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";

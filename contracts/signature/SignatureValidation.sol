@@ -3,7 +3,7 @@ pragma solidity ^0.8.22;
 
 import {AuthorizationGuardAccess} from "../management/roles/AuthorizationGuardAccess.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import {BridgeTypes} from "lib/agau-types/BridgeTypes.sol";
+import {TokenOpTypes} from "lib/agau-types/TokenOpTypes.sol";
 
 /*
     * Pass to the constructor the number of required signatures and the authorization guard address.
@@ -53,7 +53,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
     function getMessageHashCommon(
         string memory functionName,
-        BridgeTypes.CommonTokenOpSignatureData memory message
+        TokenOpTypes.CommonTokenOpSignatureData memory message
     ) public pure returns (bytes32) {
         return
             keccak256(
@@ -69,18 +69,18 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
     function getMessageHashBurn(
         string memory functionName,
-        BridgeTypes.BurnTokenOpMessageWithSignature memory message
+        TokenOpTypes.BurnTokenOpMessageWithSignature memory message
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(functionName, message.weight, message.metalId));
     }
 
     function verifyCommonOpSignature(
         string memory functionName,
-        BridgeTypes.CommonTokenOpMessageWithSignature memory message
+        TokenOpTypes.CommonTokenOpMessageWithSignature memory message
     ) external onlyTrustedContracts returns (bool) {
         bytes32 _hash = getMessageHashCommon(
             functionName,
-            BridgeTypes.CommonTokenOpSignatureData({
+            TokenOpTypes.CommonTokenOpSignatureData({
                 account: message.account,
                 weight: message.weight,
                 metalId: message.metalId,
@@ -102,7 +102,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
     function verifyBurnOpSignature(
         string memory functionName,
-        BridgeTypes.BurnTokenOpMessageWithSignature memory message
+        TokenOpTypes.BurnTokenOpMessageWithSignature memory message
     ) external onlyTrustedContracts returns (bool) {
         bytes32 _hash = keccak256(abi.encodePacked(functionName, message.weight, message.metalId));
         bytes32 prefixedHash = keccak256(

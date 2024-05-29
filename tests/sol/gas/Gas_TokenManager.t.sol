@@ -21,7 +21,7 @@ import {
     UserDiscountGroupOpMessage,
     TransactionFeeRateOpMessage,
     FeeAmountRangeOpMessage
-} from "agau-common/bridge/BridgeTypes.sol";
+} from "agau-common/bridge/TokenOpTypes.sol";
 
 contract Gas_TokenManager_mintAndLockTokens is TokenManager_InitSetup {
     CommonTokenOpMessage[] internal _commonMsgs;

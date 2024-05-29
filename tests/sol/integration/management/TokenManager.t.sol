@@ -27,7 +27,7 @@ import {
     UserDiscountGroupOpMessage,
     TransactionFeeRateOpMessage,
     FeeAmountRangeOpMessage
-} from "agau-common-bridge/BridgeTypes.sol";
+} from "agau-common-bridge/TokenOpTypes.sol";
 import {
     DISCOUNT_RATE_DENOMINATOR,
     TX_FEE_DENOMINATOR,

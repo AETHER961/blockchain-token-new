@@ -4,17 +4,25 @@ pragma solidity 0.8.22;
 import {WhitelistTypes} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
 
 /**
- * @title BridgeTypes
+ * @title TokenOpTypes
  * @author
- * @dev Library with types used in by the contracts on L1 side of the bridge
+ * @dev Library with types used by the contracts for Token interaction
  */
-library BridgeTypes {
+library TokenOpTypes {
     /// @dev Structure containing common token management message data
     struct CommonTokenOpMessage {
         // Account address message is referred to
         address account;
         // Total amount of the metal (in grams)
-        uint256 weight;
+        uint48 weight;
+        // Metal identifier
+        uint8 metalId;
+    }
+    struct CommonTokenOpMessageWithSignature {
+        // Account address message is referred to
+        address account;
+        // Total amount of the metal (in grams)
+        uint48 weight;
         // Metal identifier
         uint8 metalId;
         string documentHash;
@@ -26,8 +34,25 @@ library BridgeTypes {
         uint256[] roleIndices;
     }
 
+    struct CommonTokenOpSignatureData {
+        // Account address message is referred to
+        address account;
+        // Total amount of the metal (in grams)
+        uint48 weight;
+        // Metal identifier
+        uint8 metalId;
+        // Hash of the document to sign
+        string documentHash;
+    }
+
     /// @dev Structure containing token burn message data
     struct BurnTokenOpMessage {
+        // Total amount of the metal (in grams)
+        uint48 weight;
+        // Metal identifier
+        uint8 metalId;
+    }
+    struct BurnTokenOpMessageWithSignature {
         // Total amount of the metal (in grams)
         uint48 weight;
         // Metal identifier

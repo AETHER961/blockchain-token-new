@@ -19,7 +19,7 @@ import {
     UserDiscountGroupOpMessage,
     FeeAmountRangeOpMessage,
     TransactionFeeRateOpMessage
-} from "agau-common-bridge/BridgeTypes.sol";
+} from "agau-common-bridge/TokenOpTypes.sol";
 import {WhitelistGroupType, Discount, DiscountType} from "agau-common/admin-ops/WhitelistTypes.sol";
 
 import {BridgeMediatorMock} from "tests/sol/unit/mocks/BridgeMediatorMock.t.sol";
