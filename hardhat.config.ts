@@ -30,6 +30,7 @@ const SOLC_DEFAULT: string = `0.8.22`;
 export const chainIds = {
     hardhat: 31337n,
     sepolia: 11155111n,
+    bsc: 97n,
     ethereum: 1n,
     tenderly: 17000n, // same as Holesky
 };
@@ -44,6 +45,9 @@ function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
     let jsonRpcUrl: string | undefined;
 
     switch (chain) {
+        case `bsc`:
+            jsonRpcUrl = process.env.BSC_NODE_URL;
+            break;
         case `sepolia`:
             jsonRpcUrl = process.env.SEPOLIA_NODE_URL;
             break;
@@ -78,6 +82,8 @@ export enum UrlType {
 
 export function explorerUrl(chainId: bigint | undefined, type: UrlType, param: string): string {
     switch (chainId) {
+        case chainIds.bsc:
+            return `https://testnet.bscscan.com/${type}/${param}`;
         case chainIds.sepolia:
             return `https://sepolia.etherscan.io/${type}/${param}`;
         case chainIds.ethereum:
@@ -170,6 +176,7 @@ const config: HardhatUserConfig = {
             chainId: Number(chainIds.hardhat),
         },
         sepolia: getChainConfig(`sepolia`),
+        bsc: getChainConfig(`bsc`),
         ethereum: getChainConfig(`ethereum`),
         tenderly: getChainConfig(`tenderly`),
     },
