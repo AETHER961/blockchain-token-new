@@ -9,7 +9,7 @@ Overview steps:
 Detailed steps:
 FE Client:
 
-1.**Get Message Hash** To retrieve the message hash, call the `getMessageHashCommon` from the `MultiSigValidation` contract:
+1. **Get Message Hash** To retrieve the message hash, call the `getMessageHashCommon` from the `MultiSigValidation` contract. The message hash is used in step 3 (`signatureHash`)
 
 * Function signature:
 ```
@@ -41,7 +41,10 @@ getMessageHashCommon("mintAndLockTokens", {
 })
 ```
 
-2. **Call Mint Function**: After signing, call the `mintAndLockTokens` function, you can pass an array of messages to mint several tokens in 1 transaction:
+2. **Get Roles Array**: Call `getRoles()` from `MultiSigValidation` contract to retrieve the list of signers. Needed in step 3.
+
+
+3. **Call Mint Function**: After signing, call the `mintAndLockTokens` function, you can pass an array of messages to mint several tokens in 1 transaction:
 
 * Function Signature:
 ```
