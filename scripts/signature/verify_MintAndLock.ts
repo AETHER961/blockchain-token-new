@@ -5,15 +5,15 @@ import { ethers } from "hardhat";
 import { CommonOpMessage } from "./signature_interfaces";
 
 // Setup TokenManager address and Signature contract address
-const tokenManagerAddress = "0xe7bE5FE47d4eB5d765390b7FE3735aAc7f7b3DE9";
-const signatureContractAddress = "0x596AA7Fef64407154eD0BB4576959C71A8ff892C"
+const tokenManagerAddress = "0xeF1f6A4dFb38e5b0eBa942a1aD01230f30d68326";
+const signatureContractAddress = "0xED24c72DfD37A6Be2912AF249Aa2734f65FFCeE6"
 
 // Define message to sign for gold token minting
 const message_GoldToken: CommonOpMessage = {
-    account: tokenManagerAddress,
-    weight: 1000,
+    account: "0xE4e89e2344AbB8CC49D20E826A8f6A10e5fd2867",
+    weight: 99990,
     metalId: 0,
-    documentHash: "0xa556a0908d22788f7fb930a319c562b1bd29865184c45a52fa0a55a6ebf27278",
+    documentHash: "0x16e7daf19653063669804925fd701b85c1eda3f5a13dea452adad16024ca64cd",
     signatureHash: "",
     signatures: [
         "",
@@ -54,13 +54,13 @@ const message_SilverToken: CommonOpMessage = {
 }
 
 // Set the index of the manager's role in the MultiSig Contract
-const roleIndices = [0, 1, 2, 3, 4, 5];
+const roleIndices = [0, 1, 2, 3];
 
 // Messages to sign
 const messages = [
     message_GoldToken,
-    message_GoldToken2,
-    message_SilverToken
+    // message_GoldToken2,
+    // message_SilverToken
 ]
 
 
