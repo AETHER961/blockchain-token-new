@@ -9,6 +9,11 @@ import {WhitelistTypes} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
  * @dev Library with types used by the contracts for Token interaction
  */
 library TokenOpTypes {
+    enum OpType {
+        MINT_OP,
+        RELEASE_OP
+    }
+
     /// @dev Structure containing common token management message data
     struct CommonTokenOpMessage {
         // Account address message is referred to
