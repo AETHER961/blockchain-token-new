@@ -17,8 +17,13 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         address signerAddress;
     }
 
-    Role[] public roles;
-    uint256 public requiredSignatures;
+    struct SignerEntity {
+        address signerAddress;
+        string roleName;
+    }
+
+    mapping(TokenOpTypes.OpType => Role[]) public roles;
+    mapping(TokenOpTypes.OpType => uint256) public requiredSignatures;
 
     mapping(bytes32 => mapping(uint256 => bool)) public signatures;
     mapping(bytes32 => uint256) public signatureCount;
@@ -29,25 +34,30 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     event RoleAdded(string roleName, address signerAddress);
     event SignerUpdated(uint256 roleIndex, address newSigner);
 
-    modifier onlySigner() {
-        require(isSigner(msg.sender), "Not a signer");
-        _;
-    }
-
     constructor(
-        uint256 _requiredSignatures,
         address _authorizationGuardAddress,
-        address[] memory _signers,
-        string[] memory _roleNames
+        SignerEntity[] memory _mintSigners,
+        SignerEntity[] memory _releaseSigners
     ) {
-        requiredSignatures = _requiredSignatures;
         __AuthorizationGuardAccess_init(_authorizationGuardAddress);
 
-        require(_signers.length == _roleNames.length, "Mismatching signers and roles lengths");
-
-        /// Setup signers
-        for (uint8 i = 0; i < _signers.length; i++) {
-            addRole(_roleNames[i], _signers[i]);
+        /// Setup mint signers
+        for (uint8 i = 0; i < _mintSigners.length; i++) {
+            requiredSignatures[TokenOpTypes.OpType.MINT_OP]++;
+            addRole(
+                _mintSigners[i].roleName,
+                _mintSigners[i].signerAddress,
+                TokenOpTypes.OpType.MINT_OP
+            );
+        }
+        /// Setup release signers
+        for (uint8 i = 0; i < _releaseSigners.length; i++) {
+            requiredSignatures[TokenOpTypes.OpType.RELEASE_OP]++;
+            addRole(
+                _releaseSigners[i].roleName,
+                _releaseSigners[i].signerAddress,
+                TokenOpTypes.OpType.RELEASE_OP
+            );
         }
     }
 
@@ -76,6 +86,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
     function verifyCommonOpSignature(
         string memory functionName,
+        TokenOpTypes.OpType operationType,
         TokenOpTypes.CommonTokenOpMessageWithSignature memory message
     ) external onlyTrustedContracts returns (bool) {
         bytes32 _hash = getMessageHashCommon(
@@ -92,25 +103,12 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         );
         require(prefixedHash == message.signatureHash, "Invalid hash");
 
-        bool isValid = validateSignatures(prefixedHash, message.signatures, message.roleIndices);
-
-        // Ensure that the validation was successful
-        require(isValid, "Invalid signatures");
-
-        return true;
-    }
-
-    function verifyBurnOpSignature(
-        string memory functionName,
-        TokenOpTypes.BurnTokenOpMessageWithSignature memory message
-    ) external onlyTrustedContracts returns (bool) {
-        bytes32 _hash = keccak256(abi.encodePacked(functionName, message.weight, message.metalId));
-        bytes32 prefixedHash = keccak256(
-            abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash)
+        bool isValid = validateSignatures(
+            prefixedHash,
+            message.signatures,
+            message.roleIndices,
+            operationType
         );
-        require(prefixedHash == message.signatureHash, "Invalid hash");
-
-        bool isValid = validateSignatures(prefixedHash, message.signatures, message.roleIndices);
 
         // Ensure that the validation was successful
         require(isValid, "Invalid signatures");
@@ -121,9 +119,13 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     function validateSignatures(
         bytes32 _hash,
         bytes[] memory signaturesArray,
-        uint256[] memory roleIndices
+        uint256[] memory roleIndices,
+        TokenOpTypes.OpType operationType
     ) internal returns (bool) {
-        require(signaturesArray.length == requiredSignatures, "Not enough signatures");
+        require(
+            signaturesArray.length == requiredSignatures[operationType],
+            "Not enough signatures"
+        );
         require(
             signaturesArray.length == roleIndices.length,
             "Mismatching signature and roles length"
@@ -133,7 +135,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         for (uint256 i = 0; i < signaturesArray.length; i++) {
             address signer = recoverSigner(_hash, signaturesArray[i]);
             uint256 roleIndex = roleIndices[i];
-            require(isSignerRole(signer, roleIndex), "Invalid signer for role");
+            require(isSignerRole(signer, roleIndex, operationType), "Invalid signer for role");
             require(!signatures[_hash][roleIndex], "Signature for role already used");
 
             signatures[_hash][roleIndex] = true;
@@ -142,7 +144,10 @@ contract MultiSigValidation is AuthorizationGuardAccess {
             emit SignatureReceived(signer, _hash, roleIndex);
         }
 
-        require(signatureCount[_hash] >= requiredSignatures, "Not enough valid signatures");
+        require(
+            signatureCount[_hash] >= requiredSignatures[operationType],
+            "Not enough valid signatures"
+        );
 
         // Mark the hash as used
         usedHashes[_hash] = true;
@@ -150,18 +155,25 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         return true;
     }
 
-    function isSigner(address _address) public view returns (bool) {
-        for (uint256 i = 0; i < roles.length; i++) {
-            if (roles[i].signerAddress == _address) {
+    function isSigner(
+        address _address,
+        TokenOpTypes.OpType operationType
+    ) public view returns (bool) {
+        for (uint256 i = 0; i < roles[operationType].length; i++) {
+            if (roles[operationType][i].signerAddress == _address) {
                 return true;
             }
         }
         return false;
     }
 
-    function isSignerRole(address _address, uint256 roleIndex) public view returns (bool) {
-        require(roleIndex < roles.length, "Invalid role index");
-        return roles[roleIndex].signerAddress == _address;
+    function isSignerRole(
+        address _address,
+        uint256 roleIndex,
+        TokenOpTypes.OpType operationType
+    ) public view returns (bool) {
+        require(roleIndex < roles[operationType].length, "Invalid role index");
+        return roles[operationType][roleIndex].signerAddress == _address;
     }
 
     function recoverSigner(bytes32 _hash, bytes memory signature) internal pure returns (address) {
@@ -171,20 +183,28 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         return messageDigest.recover(signature);
     }
 
-    function addRole(string memory roleName, address signerAddress) public onlyAdminAccess {
-        roles.push(Role(roleName, signerAddress));
+    function addRole(
+        string memory roleName,
+        address signerAddress,
+        TokenOpTypes.OpType operationType
+    ) public onlyAdminAccess {
+        roles[operationType].push(Role(roleName, signerAddress));
         emit RoleAdded(roleName, signerAddress);
     }
 
-    function updateSigner(uint256 roleIndex, address newSigner) public onlyAdminAccess {
-        require(roleIndex < roles.length, "Invalid role index");
-        require(!isSigner(newSigner), "New signer is already a signer");
+    function updateSigner(
+        uint256 roleIndex,
+        address newSigner,
+        TokenOpTypes.OpType operationType
+    ) public onlyAdminAccess {
+        require(roleIndex < roles[operationType].length, "Invalid role index");
+        require(!isSigner(newSigner, operationType), "New signer is already a signer");
 
-        roles[roleIndex].signerAddress = newSigner;
+        roles[operationType][roleIndex].signerAddress = newSigner;
         emit SignerUpdated(roleIndex, newSigner);
     }
 
-    function getRoles() public view returns (Role[] memory) {
-        return roles;
+    function getRoles(TokenOpTypes.OpType operationType) public view returns (Role[] memory) {
+        return roles[operationType];
     }
 }
