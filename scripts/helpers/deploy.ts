@@ -4,6 +4,7 @@ import { VERIFY_CONTRACTS } from "./../../hardhat.config";
 import { deployWait, verifyContract } from "./utils";
 import { upgrades, ethers } from "hardhat";
 import { Contract, Signer, AddressLike, BaseContract, BigNumberish } from "ethers";
+import { SignerEntityStruct } from "../signature/signature_interfaces";
 
 // --- Helper functions for deploying contracts ---
 
@@ -234,11 +235,11 @@ export async function deployAuthorizationGuard(
 }
 
 export interface MultiSigValidationConstructorArgs {
-    requiredSignatures: BigInt;
+    // requiredSignatures: BigInt;
     authorizationGuard: AddressLike;
-    signers: AddressLike[];
-    roles: string[];
-    [key: string]: BigInt | AddressLike | AddressLike[] | string[];
+    mintSigners: SignerEntityStruct[];
+    releaseSigners: SignerEntityStruct[];
+    [key: string]: SignerEntityStruct[] | AddressLike;
 
 }
 
@@ -251,10 +252,9 @@ export async function deployMultiSigValidation(
 
     const multiSigValidationContract = await deployWait(
         multiSigValidation.deploy(
-            constructorArgs.requiredSignatures as BigNumberish,
             constructorArgs.authorizationGuard,
-            constructorArgs.signers,
-            constructorArgs.roles
+            constructorArgs.mintSigners,
+            constructorArgs.releaseSigners
         ),
     );
 
