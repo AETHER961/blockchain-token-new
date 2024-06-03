@@ -1,3 +1,5 @@
+import { Contract, Signer, AddressLike, BaseContract, BigNumberish } from "ethers";
+
 export interface CommonOpMessage {
     account: string;
     weight: number;
@@ -10,4 +12,9 @@ export interface CommonOpMessage {
     signatures: string[];
     // Signer index in roles array
     roleIndices: number[];
+}
+
+export interface SignerEntityStruct {
+    signerAddress: AddressLike;
+    roleName: string;
 }
