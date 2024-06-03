@@ -67,36 +67,48 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         TokenOpTypes.CommonTokenOpMessageWithSignature[] calldata messages
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < messages.length; ++i) {
-            if (_multiSigValidation.verifyCommonOpSignature("mintAndLockTokens", messages[i])) {
+            if (
+                _multiSigValidation.verifyCommonOpSignature(
+                    "mintAndLockTokens",
+                    TokenOpTypes.OpType.MINT_OP,
+                    messages[i]
+                )
+            ) {
                 MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
                 token.mintAndLock(messages[i].account, toTokenAmount(token, messages[i].weight));
             }
         }
     }
 
-    // signers => global group
+    // signers => auditor only
     /// @inheritdoc ITokenManager
     function releaseTokens(
         TokenOpTypes.CommonTokenOpMessageWithSignature[] calldata messages
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < messages.length; ++i) {
-            if (_multiSigValidation.verifyCommonOpSignature("releaseTokens", messages[i])) {
+            if (
+                _multiSigValidation.verifyCommonOpSignature(
+                    "releaseTokens",
+                    TokenOpTypes.OpType.RELEASE_OP,
+                    messages[i]
+                )
+            ) {
                 MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
                 token.release(messages[i].account, toTokenAmount(token, messages[i].weight));
             }
         }
     }
 
-    // signers => global group
+    // no signers
     /// @inheritdoc ITokenManager
     function burnTokens(
         TokenOpTypes.BurnTokenOpMessageWithSignature[] calldata messages
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < messages.length; ++i) {
-            if (_multiSigValidation.verifyBurnOpSignature("burnTokens", messages[i])) {
-                MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
-                token.burn(address(this), toTokenAmount(token, messages[i].weight));
-            }
+            // if (_multiSigValidation.verifyBurnOpSignature("burnTokens", messages[i])) {
+            MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
+            token.burn(address(this), toTokenAmount(token, messages[i].weight));
+            // }
         }
     }
 
