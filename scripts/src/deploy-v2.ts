@@ -20,12 +20,10 @@ const adminAddresses = [
 ];
 
 const roles = [
+    "Warehouse admin",
     "Director",
-    "Backend Server",
-    "Token Manager 2",
-    "Token Manager 3",
-    "Token Manager 4",
-    "Token Manager 5",
+    "Token manager",
+    "Auditor",
 ];
 
 
@@ -42,12 +40,23 @@ export const fullDeploy = async (): Promise<void> => {
     const [deployer, backendWallet, signer1, signer2, signer3, signer4] = await ethers.getSigners();
 
     // Wallets who must sign the message to authorize a transaction such as `mintAndLockTokens`, `releaseTokens`, `burnTokens`
-    const signers = [deployer.address, backendWallet.address, signer1.address, signer2.address, signer3.address, signer4.address];
+    const signers = [signer1.address, signer2.address, signer3.address, signer4.address];
+
+    const mintSigners = [
+        { signerAddress: signer1.address, roleName: "Warehouse admin" },
+        { signerAddress: signer2.address, roleName: "Director" },
+        { signerAddress: signer3.address, roleName: "Token manager" },
+        { signerAddress: signer4.address, roleName: "Auditor" },
+    ];
+
+    const releaseSigners = [
+        { signerAddress: signer4.address, roleName: "Auditor" },
+    ];
 
     // Wallets who can call the TokenManager and other contract functions such as `mintAndLockTokens`, `releaseTokens`, should be the backend wallet.
     const authorizedAdmins = [deployer.address, backendWallet.address];
 
-    console.log(`Signers:`, { deployer: deployer, backendWallet: backendWallet.address, signer1: signer1.address, signer2: signer2.address, signer3: signer3.address, signer4: signer4.address });
+    console.log(`Signers:`, { signer1: signer1.address, signer2: signer2.address, signer3: signer3.address, signer4: signer4.address });
 
     deployerAddr = deployer.address;
     const testnetDeployment = await isTestnetDeployment();
@@ -89,10 +98,9 @@ export const fullDeploy = async (): Promise<void> => {
     // Deploy Multi Signature Validation contract
     const multiSigValidation = await trackDeployment(
         () => deployment.deployMultiSigValidation(deployer, {
-            requiredSignatures: BigInt(signers.length),
             authorizationGuard: authorizationGuard.target,
-            signers,
-            roles
+            mintSigners: mintSigners,
+            releaseSigners: releaseSigners
         }),
         `MultiSigValidation`
     )
