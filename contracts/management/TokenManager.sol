@@ -69,6 +69,7 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         }
     }
 
+    // signers => auditor only
     /// @inheritdoc ITokenManager
     function releaseTokens(
         TokenOpTypes.CommonTokenOpWithSignature[] calldata instructions
@@ -90,9 +91,10 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         }
     }
 
+    // no signers
     /// @inheritdoc ITokenManager
     function burnTokens(
-        TokenOpTypes.BurnTokenOp[] calldata instructions
+        TokenOpTypes.BurnTokenOpWithSignature[] calldata instructions
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < instructions.length; ++i) {
             MetalToken token = _tokenFactory.tokenForId(instructions[i].metalId);
