@@ -29,7 +29,12 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     mapping(bytes32 => uint256) public signatureCount;
     mapping(bytes32 => bool) public usedHashes;
 
-    event TokensMinted(address operator, uint256 amount);
+    event SignatureValidated(
+        address operator,
+        TokenOpTypes.OpType operationType,
+        bytes32 operationMessageHash,
+        bytes[] signatures
+    );
     event SignatureReceived(address signer, bytes32 hash, uint256 roleIndex);
     event RoleAdded(string roleName, address signerAddress);
     event SignerUpdated(uint256 roleIndex, address newSigner);
@@ -79,7 +84,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
     function getMessageHashBurn(
         string memory functionName,
-        TokenOpTypes.BurnTokenOpMessageWithSignature memory message
+        TokenOpTypes.BurnTokenOpWithSignature memory message
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(functionName, message.weight, message.metalId));
     }
@@ -87,7 +92,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     function verifyCommonOpSignature(
         string memory functionName,
         TokenOpTypes.OpType operationType,
-        TokenOpTypes.CommonTokenOpMessageWithSignature memory message
+        TokenOpTypes.CommonTokenOpWithSignature memory message
     ) external onlyTrustedContracts returns (bool) {
         bytes32 _hash = getMessageHashCommon(
             functionName,
@@ -152,6 +157,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         // Mark the hash as used
         usedHashes[_hash] = true;
 
+        emit SignatureValidated(msg.sender, operationType, _hash, signaturesArray);
         return true;
     }
 
