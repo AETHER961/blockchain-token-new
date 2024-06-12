@@ -7,15 +7,15 @@ import {BridgeMediator} from "agau-common-bridge/BridgeMediator.sol";
 
 import {OpType} from "agau-common/admin-ops/OpsTypes.sol";
 import {
-    CommonTokenOpMessage,
-    BurnTokenOpMessage,
-    TokenManagementOpMessage,
-    TokenTransferOpMessage,
-    CreateFeeDiscountGroupOpMessage,
-    TransactionFeeRateOpMessage,
-    FeeAmountRangeOpMessage,
-    UpdateFeeDiscountGroupOpMessage,
-    UserDiscountGroupOpMessage
+    CommonTokenOp,
+    BurnTokenOp,
+    TokenManagementOp,
+    TokenTransferOp,
+    CreateFeeDiscountGroupOp,
+    TransactionFeeRateOp,
+    FeeAmountRangeOp,
+    UpdateFeeDiscountGroupOp,
+    UserDiscountGroupOp
 } from "agau-common-bridge/TokenOpTypes.sol";
 import {DiscountType, Discount} from "agau-common/admin-ops/WhitelistTypes.sol";
 
@@ -43,11 +43,11 @@ abstract contract TokenManager_InitSetup is BaseTest {
     function _generateCommonTokenOpMessages(
         uint256 numOfMessages,
         uint48 weightPerMessage
-    ) internal returns (CommonTokenOpMessage[] memory messages) {
-        messages = new CommonTokenOpMessage[](numOfMessages);
+    ) internal returns (CommonTokenOp[] memory messages) {
+        messages = new CommonTokenOp[](numOfMessages);
 
         for (uint256 i; i < numOfMessages; ++i) {
-            messages[i] = CommonTokenOpMessage({
+            messages[i] = CommonTokenOp({
                 account: makeAddr(string.concat("account_", i.toString())),
                 weight: weightPerMessage,
                 metalId: TOKEN_ID
@@ -56,24 +56,21 @@ abstract contract TokenManager_InitSetup is BaseTest {
     }
 
     function _generateBurnTokenOpMessages(
-        CommonTokenOpMessage[] memory message
-    ) internal pure returns (BurnTokenOpMessage[] memory messages) {
+        CommonTokenOp[] memory message
+    ) internal pure returns (BurnTokenOp[] memory messages) {
         uint256 numOfMessages = message.length;
-        messages = new BurnTokenOpMessage[](numOfMessages);
+        messages = new BurnTokenOp[](numOfMessages);
 
         for (uint256 i; i < numOfMessages; ++i) {
-            messages[i] = BurnTokenOpMessage({
-                weight: message[i].weight,
-                metalId: message[i].metalId
-            });
+            messages[i] = BurnTokenOp({weight: message[i].weight, metalId: message[i].metalId});
         }
     }
 
     function _generateTokenManagementOpMessage(
-        CommonTokenOpMessage memory message
-    ) internal view returns (TokenManagementOpMessage memory) {
+        CommonTokenOp memory message
+    ) internal view returns (TokenManagementOp memory) {
         return
-            TokenManagementOpMessage({
+            TokenManagementOp({
                 user: message.account,
                 metalId: message.metalId,
                 amount: _tokenManager.toTokenAmount(_token, message.weight)
@@ -81,9 +78,9 @@ abstract contract TokenManager_InitSetup is BaseTest {
     }
 
     function _generateTokenTransferOpMessage(
-        TokenManagementOpMessage memory tokenMngMessage
-    ) internal returns (TokenTransferOpMessage memory message) {
-        message = TokenTransferOpMessage({
+        TokenManagementOp memory tokenMngMessage
+    ) internal returns (TokenTransferOp memory message) {
+        message = TokenTransferOp({
             from: tokenMngMessage.user,
             to: makeAddr("to"),
             metalId: tokenMngMessage.metalId,
@@ -92,9 +89,9 @@ abstract contract TokenManager_InitSetup is BaseTest {
     }
 
     function _generateTokenTransferOpMessage(
-        CommonTokenOpMessage memory commonMessage
-    ) internal returns (TokenTransferOpMessage memory message) {
-        message = TokenTransferOpMessage({
+        CommonTokenOp memory commonMessage
+    ) internal returns (TokenTransferOp memory message) {
+        message = TokenTransferOp({
             from: address(_tokenManager),
             to: makeAddr("to"),
             metalId: commonMessage.metalId,
@@ -105,9 +102,9 @@ abstract contract TokenManager_InitSetup is BaseTest {
     function _generateCreateDiscountGroupMessage()
         internal
         view
-        returns (CreateFeeDiscountGroupOpMessage memory message)
+        returns (CreateFeeDiscountGroupOp memory message)
     {
-        message = CreateFeeDiscountGroupOpMessage({
+        message = CreateFeeDiscountGroupOp({
             groupType: TX_GROUP_TYPE,
             discount: Discount({value: DISCOUNT_VALUE, discountType: DISCOUNT_TYPE})
         });
@@ -115,20 +112,20 @@ abstract contract TokenManager_InitSetup is BaseTest {
 
     function _generateTransactionFeeRateMessage(
         uint256 feeRate
-    ) internal pure returns (TransactionFeeRateOpMessage memory message) {
-        message = TransactionFeeRateOpMessage({feeRate: feeRate});
+    ) internal pure returns (TransactionFeeRateOp memory message) {
+        message = TransactionFeeRateOp({feeRate: feeRate});
     }
 
     function _generateFeeAmountRangeMessage(
         uint256 minAmount,
         uint256 maxAmount
-    ) internal pure returns (FeeAmountRangeOpMessage memory message) {
-        message = FeeAmountRangeOpMessage({minimumAmount: minAmount, maximumAmount: maxAmount});
+    ) internal pure returns (FeeAmountRangeOp memory message) {
+        message = FeeAmountRangeOp({minimumAmount: minAmount, maximumAmount: maxAmount});
     }
 }
 
 abstract contract TokenManager_TokensMintedAndLocked_SingleMessage is TokenManager_InitSetup {
-    CommonTokenOpMessage[] internal _commonMsgs;
+    CommonTokenOp[] internal _commonMsgs;
 
     function setUp() public virtual override {
         super.setUp();
@@ -143,7 +140,7 @@ abstract contract TokenManager_TokensMintedAndLocked_SingleMessage is TokenManag
 }
 
 abstract contract TokenManager_TokensMintedAndLocked_MultipleMessages is TokenManager_InitSetup {
-    CommonTokenOpMessage[] internal _commonMsgs;
+    CommonTokenOp[] internal _commonMsgs;
 
     function setUp() public virtual override {
         super.setUp();
@@ -184,7 +181,7 @@ abstract contract TokenManager_TokensReleased_MultipleMessages is
 }
 
 abstract contract TokenManager_TokensFrozen is TokenManager_TokensReleased_SingleMessage {
-    TokenManagementOpMessage internal _tokenManagementMsg;
+    TokenManagementOp internal _tokenManagementMsg;
 
     function setUp() public virtual override {
         super.setUp();
@@ -238,7 +235,7 @@ abstract contract TokenManager_FeeDiscountGroupCreated is TokenManager_InitSetup
     function setUp() public virtual override {
         super.setUp();
 
-        CreateFeeDiscountGroupOpMessage memory message = _generateCreateDiscountGroupMessage();
+        CreateFeeDiscountGroupOp memory message = _generateCreateDiscountGroupMessage();
 
         vm.prank(address(_bridgeMediator));
         _tokenManager.createDiscountGroup(message);
@@ -248,7 +245,7 @@ abstract contract TokenManager_FeeDiscountGroupCreated is TokenManager_InitSetup
     function _generateUpdateDiscountGroupMessage()
         internal
         view
-        returns (UpdateFeeDiscountGroupOpMessage memory message)
+        returns (UpdateFeeDiscountGroupOp memory message)
     {
         return _generateUpdateDiscountGroupMessage(DISCOUNT_VALUE, DISCOUNT_TYPE);
     }
@@ -256,8 +253,8 @@ abstract contract TokenManager_FeeDiscountGroupCreated is TokenManager_InitSetup
     function _generateUpdateDiscountGroupMessage(
         uint248 discountValue,
         DiscountType discountType
-    ) internal view returns (UpdateFeeDiscountGroupOpMessage memory message) {
-        message = UpdateFeeDiscountGroupOpMessage({
+    ) internal view returns (UpdateFeeDiscountGroupOp memory message) {
+        message = UpdateFeeDiscountGroupOp({
             groupType: TX_GROUP_TYPE,
             discount: Discount({value: discountValue, discountType: discountType}),
             groupId: _discountGroupId
@@ -267,9 +264,9 @@ abstract contract TokenManager_FeeDiscountGroupCreated is TokenManager_InitSetup
     function _generateUserDiscountGroupMessage()
         internal
         view
-        returns (UserDiscountGroupOpMessage memory message)
+        returns (UserDiscountGroupOp memory message)
     {
-        message = UserDiscountGroupOpMessage({
+        message = UserDiscountGroupOp({
             groupType: TX_GROUP_TYPE,
             groupId: _discountGroupId,
             user: USER_1

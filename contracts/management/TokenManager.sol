@@ -12,16 +12,6 @@ import {OpsTypes} from "lib/agau-common/admin-ops/OpsTypes.sol";
 import {TokenOpTypes} from "lib/agau-types/TokenOpTypes.sol";
 import {ITokenManager} from "lib/agau-common/tokens-management/interface/ITokenManager.sol";
 import {IFeesWhitelistManager} from "lib/agau-common/admin-ops/interface/IFeesWhitelistManager.sol";
-import {
-    ITokenizationRecovery
-} from "lib/agau-common/tokens-management/tokenization/interface/ITokenizationRecovery.sol";
-import {
-    IRedemptionCallback
-} from "lib/agau-common/tokens-management/redemption/interface/IRedemptionCallback.sol";
-import {
-    IRedemptionRecovery
-} from "lib/agau-common/tokens-management/redemption/interface/IRedemptionRecovery.sol";
-import {IOpsRecovery} from "lib/agau-common/admin-ops/interface/IOpsRecovery.sol";
 
 /**
  * @title TokenManager
@@ -40,9 +30,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     FeesManager private immutable _feesManager;
 
     MultiSigValidation private _multiSigValidation;
-
-    /// @dev mapping for message status
-    mapping(bytes32 => bool) private messageExecuted; // added
 
     /// @param tokenFactory_ The address of `TokenFactory` contract
     /// @param feesManager_ The address of `FeesManager` contract
@@ -64,18 +51,21 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     // signers => global group
     /// @inheritdoc ITokenManager
     function mintAndLockTokens(
-        TokenOpTypes.CommonTokenOpMessageWithSignature[] calldata messages
+        TokenOpTypes.CommonTokenOpWithSignature[] calldata instructions
     ) external onlyAuthorizedAccess {
-        for (uint256 i; i < messages.length; ++i) {
+        for (uint256 i; i < instructions.length; ++i) {
             if (
                 _multiSigValidation.verifyCommonOpSignature(
                     "mintAndLockTokens",
                     TokenOpTypes.OpType.MINT_OP,
-                    messages[i]
+                    instructions[i]
                 )
             ) {
-                MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
-                token.mintAndLock(messages[i].account, toTokenAmount(token, messages[i].weight));
+                MetalToken token = _tokenFactory.tokenForId(instructions[i].metalId);
+                token.mintAndLock(
+                    instructions[i].account,
+                    toTokenAmount(token, instructions[i].weight)
+                );
             }
         }
     }
@@ -83,18 +73,21 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     // signers => auditor only
     /// @inheritdoc ITokenManager
     function releaseTokens(
-        TokenOpTypes.CommonTokenOpMessageWithSignature[] calldata messages
+        TokenOpTypes.CommonTokenOpWithSignature[] calldata instructions
     ) external onlyAuthorizedAccess {
-        for (uint256 i; i < messages.length; ++i) {
+        for (uint256 i; i < instructions.length; ++i) {
             if (
                 _multiSigValidation.verifyCommonOpSignature(
                     "releaseTokens",
                     TokenOpTypes.OpType.RELEASE_OP,
-                    messages[i]
+                    instructions[i]
                 )
             ) {
-                MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
-                token.release(messages[i].account, toTokenAmount(token, messages[i].weight));
+                MetalToken token = _tokenFactory.tokenForId(instructions[i].metalId);
+                token.release(
+                    instructions[i].account,
+                    toTokenAmount(token, instructions[i].weight)
+                );
             }
         }
     }
@@ -102,92 +95,97 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
     // no signers
     /// @inheritdoc ITokenManager
     function burnTokens(
-        TokenOpTypes.BurnTokenOpMessageWithSignature[] calldata messages
+        TokenOpTypes.BurnTokenOpWithSignature[] calldata instructions
     ) external onlyAuthorizedAccess {
-        for (uint256 i; i < messages.length; ++i) {
-            // if (_multiSigValidation.verifyBurnOpSignature("burnTokens", messages[i])) {
-            MetalToken token = _tokenFactory.tokenForId(messages[i].metalId);
-            token.burn(address(this), toTokenAmount(token, messages[i].weight));
-            // }
+        for (uint256 i; i < instructions.length; ++i) {
+            MetalToken token = _tokenFactory.tokenForId(instructions[i].metalId);
+            token.burn(address(this), toTokenAmount(token, instructions[i].weight));
         }
     }
 
     /// @inheritdoc ITokenManager
     function refundTokens(
-        TokenOpTypes.CommonTokenOpMessage[] calldata messages
+        TokenOpTypes.CommonTokenOp[] calldata instructions
     ) external onlyAuthorizedAccess {
-        for (uint256 i; i < messages.length; ++i) {
-            MetalToken token = _tokenFactory.tokenForId(messages[0].metalId);
-            token.safeTransfer(messages[i].account, toTokenAmount(token, messages[i].weight));
+        for (uint256 i; i < instructions.length; ++i) {
+            MetalToken token = _tokenFactory.tokenForId(instructions[0].metalId);
+            token.safeTransfer(
+                instructions[i].account,
+                toTokenAmount(token, instructions[i].weight)
+            );
         }
     }
 
     /// @inheritdoc ITokenManager
     function freezeTokens(
-        TokenOpTypes.TokenManagementOpMessage calldata message
+        TokenOpTypes.TokenManagementOp calldata instruction
     ) external onlyAdminAccess {
-        MetalToken token = _tokenFactory.tokenForId(message.metalId);
-        token.lock(message.user, message.amount);
+        MetalToken token = _tokenFactory.tokenForId(instruction.metalId);
+        token.lock(instruction.user, instruction.amount);
     }
 
     // signer => auditor
     /// @inheritdoc ITokenManager
     function unfreezeTokens(
-        TokenOpTypes.TokenManagementOpMessage calldata message
+        TokenOpTypes.TokenManagementOp calldata instruction
     ) external onlyAdminAccess {
-        MetalToken token = _tokenFactory.tokenForId(message.metalId);
-        token.unlock(message.user, message.amount);
+        MetalToken token = _tokenFactory.tokenForId(instruction.metalId);
+        token.unlock(instruction.user, instruction.amount);
     }
 
     /// @inheritdoc ITokenManager
     function seizeTokens(
-        TokenOpTypes.TokenTransferOpMessage calldata message
+        TokenOpTypes.TokenTransferOp calldata instruction
     ) external onlyAdminAccess {
-        MetalToken token = _tokenFactory.tokenForId(message.metalId);
-        token.seizeLocked(message.from, message.to, message.amount);
+        MetalToken token = _tokenFactory.tokenForId(instruction.metalId);
+        token.seizeLocked(instruction.from, instruction.to, instruction.amount);
     }
 
     /// @inheritdoc ITokenManager
     function transferTokens(
-        TokenOpTypes.TokenTransferOpMessage calldata message
+        TokenOpTypes.TokenTransferOp calldata instruction
     ) external onlyAdminAccess {
-        MetalToken token = _tokenFactory.tokenForId(message.metalId);
-        token.safeTransfer(message.to, message.amount);
+        MetalToken token = _tokenFactory.tokenForId(instruction.metalId);
+        token.safeTransfer(instruction.to, instruction.amount);
     }
 
     /// @inheritdoc IFeesWhitelistManager
     function createDiscountGroup(
-        TokenOpTypes.CreateFeeDiscountGroupOpMessage calldata message
+        TokenOpTypes.CreateFeeDiscountGroupOp calldata instruction
     ) external onlyAdminAccess {
-        _feesManager.createDiscountGroup(message.groupType, message.discount);
+        _feesManager.createDiscountGroup(instruction.groupType, instruction.discount);
     }
 
     /// @inheritdoc IFeesWhitelistManager
     function updateDiscountGroup(
-        TokenOpTypes.UpdateFeeDiscountGroupOpMessage calldata message
+        TokenOpTypes.UpdateFeeDiscountGroupOp calldata instruction
     ) external onlyAdminAccess {
-        _feesManager.updateDiscountGroup(message.groupType, message.groupId, message.discount);
+        _feesManager.updateDiscountGroup(
+            instruction.groupType,
+            instruction.groupId,
+            instruction.discount
+        );
     }
 
     /// @inheritdoc IFeesWhitelistManager
     function setUserDiscountGroup(
-        TokenOpTypes.UserDiscountGroupOpMessage calldata message
+        TokenOpTypes.UserDiscountGroupOp calldata instruction
     ) external onlyAdminAccess {
-        _feesManager.setGroupForUser(message.groupType, message.groupId, message.user);
+        _feesManager.setGroupForUser(instruction.groupType, instruction.groupId, instruction.user);
     }
 
     /// @inheritdoc IFeesWhitelistManager
     function updateTransactionFeeRate(
-        TokenOpTypes.TransactionFeeRateOpMessage calldata message
+        TokenOpTypes.TransactionFeeRateOp calldata instruction
     ) external onlyAdminAccess {
-        _feesManager.setTxFeeRate(message.feeRate);
+        _feesManager.setTxFeeRate(instruction.feeRate);
     }
 
     /// @inheritdoc IFeesWhitelistManager
     function updateFeeAmountRange(
-        TokenOpTypes.FeeAmountRangeOpMessage calldata message
+        TokenOpTypes.FeeAmountRangeOp calldata instruction
     ) external onlyAdminAccess {
-        _feesManager.setMinAndMaxTxFee(message.minimumAmount, message.maximumAmount);
+        _feesManager.setMinAndMaxTxFee(instruction.minimumAmount, instruction.maximumAmount);
     }
 
     /// @dev Returns the address of the `TokenFactory` contract

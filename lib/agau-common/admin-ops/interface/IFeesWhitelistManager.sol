@@ -10,29 +10,25 @@ import {TokenOpTypes} from "../../../agau-types/TokenOpTypes.sol";
  *
  */
 interface IFeesWhitelistManager {
-    /// @dev Creates discount group based on the data provided via `message`.
-    /// @param message The create discount group message
-    function createDiscountGroup(
-        TokenOpTypes.CreateFeeDiscountGroupOpMessage memory message
-    ) external;
+    /// @dev Creates discount group based on the data provided via `instruction`.
+    /// @param instruction The create discount group instruction
+    function createDiscountGroup(TokenOpTypes.CreateFeeDiscountGroupOp memory instruction) external;
 
-    /// @dev Updates discount group based on the data provided via `message`.
-    /// @param message The update discount group message
-    function updateDiscountGroup(
-        TokenOpTypes.UpdateFeeDiscountGroupOpMessage memory message
-    ) external;
+    /// @dev Updates discount group based on the data provided via `instruction`.
+    /// @param instruction The update discount group instruction
+    function updateDiscountGroup(TokenOpTypes.UpdateFeeDiscountGroupOp memory instruction) external;
 
-    /// @dev Sets user's discount group based on the data provided via `message`.
-    /// @param message The set user discount group message
-    function setUserDiscountGroup(TokenOpTypes.UserDiscountGroupOpMessage memory message) external;
+    /// @dev Sets user's discount group based on the data provided via `instruction`.
+    /// @param instruction The set user discount group instruction
+    function setUserDiscountGroup(TokenOpTypes.UserDiscountGroupOp memory instruction) external;
 
-    /// @dev Updates transaction fee rate based on the data provided via `message`.
-    /// @param message The update transaction fee rate message
+    /// @dev Updates transaction fee rate based on the data provided via `instruction`.
+    /// @param instruction The update transaction fee rate instruction
     function updateTransactionFeeRate(
-        TokenOpTypes.TransactionFeeRateOpMessage memory message
+        TokenOpTypes.TransactionFeeRateOp memory instruction
     ) external;
 
-    /// @dev Updates fee amount range based on the data provided via `message`.
-    /// @param message The update fee amount range message
-    function updateFeeAmountRange(TokenOpTypes.FeeAmountRangeOpMessage memory message) external;
+    /// @dev Updates fee amount range based on the data provided via `instruction`.
+    /// @param instruction The update fee amount range instruction
+    function updateFeeAmountRange(TokenOpTypes.FeeAmountRangeOp memory instruction) external;
 }

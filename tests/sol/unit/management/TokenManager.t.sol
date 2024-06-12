@@ -10,15 +10,15 @@ import {BridgeInteractor} from "agau-common/bridge/BridgeInteractor.sol";
 
 import {OpType} from "agau-common/admin-ops/OpsTypes.sol";
 import {
-    CommonTokenOpMessage,
-    BurnTokenOpMessage,
-    TokenManagementOpMessage,
-    TokenTransferOpMessage,
-    CreateFeeDiscountGroupOpMessage,
-    UpdateFeeDiscountGroupOpMessage,
-    UserDiscountGroupOpMessage,
-    FeeAmountRangeOpMessage,
-    TransactionFeeRateOpMessage
+    CommonTokenOp,
+    BurnTokenOp,
+    TokenManagementOp,
+    TokenTransferOp,
+    CreateFeeDiscountGroupOp,
+    UpdateFeeDiscountGroupOp,
+    UserDiscountGroupOp,
+    FeeAmountRangeOp,
+    TransactionFeeRateOp
 } from "agau-common-bridge/TokenOpTypes.sol";
 import {WhitelistGroupType, Discount, DiscountType} from "agau-common/admin-ops/WhitelistTypes.sol";
 
@@ -92,16 +92,12 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(nonMediator);
-        tokenManager.mintAndLockTokens(new CommonTokenOpMessage[](0));
+        tokenManager.mintAndLockTokens(new CommonTokenOp[](0));
     }
 
     function test_mintAndLockTokens_properlyExecuted(uint8 metalId, uint48 weight) public {
-        CommonTokenOpMessage[] memory msgs = new CommonTokenOpMessage[](1);
-        msgs[0] = CommonTokenOpMessage({
-            account: makeAddr("account"),
-            weight: weight,
-            metalId: metalId
-        });
+        CommonTokenOp[] memory msgs = new CommonTokenOp[](1);
+        msgs[0] = CommonTokenOp({account: makeAddr("account"), weight: weight, metalId: metalId});
 
         mockCall_tokenFactory_tokenForId(metalId, token);
         mockCall_token_decimals(0);
@@ -121,16 +117,12 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(nonMediator);
-        tokenManager.releaseTokens(new CommonTokenOpMessage[](0));
+        tokenManager.releaseTokens(new CommonTokenOp[](0));
     }
 
     function test_releaseTokens_properlyExecuted(uint8 metalId, uint48 weight) public {
-        CommonTokenOpMessage[] memory msgs = new CommonTokenOpMessage[](1);
-        msgs[0] = CommonTokenOpMessage({
-            account: makeAddr("account"),
-            weight: weight,
-            metalId: metalId
-        });
+        CommonTokenOp[] memory msgs = new CommonTokenOp[](1);
+        msgs[0] = CommonTokenOp({account: makeAddr("account"), weight: weight, metalId: metalId});
 
         mockCall_tokenFactory_tokenForId(metalId, token);
         mockCall_token_decimals(0);
@@ -150,12 +142,12 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(nonMediator);
-        tokenManager.burnTokens(new BurnTokenOpMessage[](0));
+        tokenManager.burnTokens(new BurnTokenOp[](0));
     }
 
     function test_burnTokens_properlyExecuted(uint8 metalId, uint48 weight) public {
-        BurnTokenOpMessage[] memory msgs = new BurnTokenOpMessage[](1);
-        msgs[0] = BurnTokenOpMessage({weight: weight, metalId: metalId});
+        BurnTokenOp[] memory msgs = new BurnTokenOp[](1);
+        msgs[0] = BurnTokenOp({weight: weight, metalId: metalId});
 
         mockCall_tokenFactory_tokenForId(metalId, token);
         mockCall_token_decimals(0);
@@ -204,16 +196,12 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(nonMediator);
-        tokenManager.refundTokens(new CommonTokenOpMessage[](0));
+        tokenManager.refundTokens(new CommonTokenOp[](0));
     }
 
     function test_refundTokens_properlyExecuted(uint8 metalId, uint48 weight) public {
-        CommonTokenOpMessage[] memory msgs = new CommonTokenOpMessage[](1);
-        msgs[0] = CommonTokenOpMessage({
-            account: makeAddr("account"),
-            weight: weight,
-            metalId: metalId
-        });
+        CommonTokenOp[] memory msgs = new CommonTokenOp[](1);
+        msgs[0] = CommonTokenOp({account: makeAddr("account"), weight: weight, metalId: metalId});
 
         mockCall_tokenFactory_tokenForId(metalId, token);
         mockCall_token_decimals(0);
@@ -233,13 +221,11 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(nonMediator);
-        tokenManager.freezeTokens(
-            TokenManagementOpMessage({user: address(0), amount: 0, metalId: 0})
-        );
+        tokenManager.freezeTokens(TokenManagementOp({user: address(0), amount: 0, metalId: 0}));
     }
 
     function test_freezeTokens_properlyExecuted(uint256 amount, uint8 metalId) public {
-        TokenManagementOpMessage memory msg_ = TokenManagementOpMessage({
+        TokenManagementOp memory msg_ = TokenManagementOp({
             user: makeAddr("user"),
             amount: amount,
             metalId: metalId
@@ -263,13 +249,11 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(nonMediator);
-        tokenManager.unfreezeTokens(
-            TokenManagementOpMessage({user: address(0), amount: 0, metalId: 0})
-        );
+        tokenManager.unfreezeTokens(TokenManagementOp({user: address(0), amount: 0, metalId: 0}));
     }
 
     function test_unfreezeTokens_properlyExecuted(uint256 amount, uint8 metalId) public {
-        TokenManagementOpMessage memory msg_ = TokenManagementOpMessage({
+        TokenManagementOp memory msg_ = TokenManagementOp({
             user: makeAddr("user"),
             amount: amount,
             metalId: metalId
@@ -294,12 +278,12 @@ contract TokenManagerTest is
 
         vm.prank(nonMediator);
         tokenManager.seizeTokens(
-            TokenTransferOpMessage({from: address(0), to: address(0), amount: 0, metalId: 0})
+            TokenTransferOp({from: address(0), to: address(0), amount: 0, metalId: 0})
         );
     }
 
     function test_seizeTokens_properlyExecuted(uint8 metalId, uint256 amount) public {
-        TokenTransferOpMessage memory msg_ = TokenTransferOpMessage({
+        TokenTransferOp memory msg_ = TokenTransferOp({
             from: makeAddr("from"),
             to: makeAddr("to"),
             amount: amount,
@@ -325,12 +309,12 @@ contract TokenManagerTest is
 
         vm.prank(nonMediator);
         tokenManager.transferTokens(
-            TokenTransferOpMessage({from: address(0), to: address(0), amount: 0, metalId: 0})
+            TokenTransferOp({from: address(0), to: address(0), amount: 0, metalId: 0})
         );
     }
 
     function test_transferTokens_properlyExecuted(uint256 amount, uint8 metalId) public {
-        TokenTransferOpMessage memory msg_ = TokenTransferOpMessage({
+        TokenTransferOp memory msg_ = TokenTransferOp({
             from: makeAddr("from"),
             to: makeAddr("to"),
             amount: amount,
@@ -356,7 +340,7 @@ contract TokenManagerTest is
 
         vm.prank(nonMediator);
         tokenManager.createDiscountGroup(
-            CreateFeeDiscountGroupOpMessage({
+            CreateFeeDiscountGroupOp({
                 groupType: WhitelistGroupType.None,
                 discount: Discount({value: 0, discountType: DiscountType.None})
             })
@@ -364,7 +348,7 @@ contract TokenManagerTest is
     }
 
     function test_createDiscountGroup_properlyExecuted() public {
-        CreateFeeDiscountGroupOpMessage memory msg_ = CreateFeeDiscountGroupOpMessage({
+        CreateFeeDiscountGroupOp memory msg_ = CreateFeeDiscountGroupOp({
             groupType: WhitelistGroupType.None,
             discount: Discount({value: 0, discountType: DiscountType.None})
         });
@@ -386,7 +370,7 @@ contract TokenManagerTest is
 
         vm.prank(account);
         tokenManager.updateDiscountGroup(
-            UpdateFeeDiscountGroupOpMessage({
+            UpdateFeeDiscountGroupOp({
                 groupType: WhitelistGroupType.None,
                 discount: Discount({value: 0, discountType: DiscountType.None}),
                 groupId: 0
@@ -395,7 +379,7 @@ contract TokenManagerTest is
     }
 
     function test_updateDiscountGroup_properlyExecuted() public {
-        UpdateFeeDiscountGroupOpMessage memory msg_ = UpdateFeeDiscountGroupOpMessage({
+        UpdateFeeDiscountGroupOp memory msg_ = UpdateFeeDiscountGroupOp({
             groupType: WhitelistGroupType.None,
             discount: Discount({value: 0, discountType: DiscountType.None}),
             groupId: 0
@@ -418,16 +402,12 @@ contract TokenManagerTest is
 
         vm.prank(account);
         tokenManager.setUserDiscountGroup(
-            UserDiscountGroupOpMessage({
-                groupType: WhitelistGroupType.None,
-                user: address(0),
-                groupId: 0
-            })
+            UserDiscountGroupOp({groupType: WhitelistGroupType.None, user: address(0), groupId: 0})
         );
     }
 
     function test_setUserDiscountGroup_properlyExecuted() public {
-        UserDiscountGroupOpMessage memory msg_ = UserDiscountGroupOpMessage({
+        UserDiscountGroupOp memory msg_ = UserDiscountGroupOp({
             groupType: WhitelistGroupType.None,
             user: makeAddr("user"),
             groupId: 0
@@ -449,14 +429,14 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(account);
-        tokenManager.updateTransactionFeeRate(TransactionFeeRateOpMessage({feeRate: 0}));
+        tokenManager.updateTransactionFeeRate(TransactionFeeRateOp({feeRate: 0}));
     }
 
     function test_updateTransactionFeeRate_properlyExecuted(uint256 txFeeRate) public {
         expectCall_feesManager_setTxFeeRate(txFeeRate);
 
         vm.prank(bridgeMediator);
-        tokenManager.updateTransactionFeeRate(TransactionFeeRateOpMessage({feeRate: txFeeRate}));
+        tokenManager.updateTransactionFeeRate(TransactionFeeRateOp({feeRate: txFeeRate}));
     }
 
     //-------------------
@@ -469,9 +449,7 @@ contract TokenManagerTest is
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
 
         vm.prank(account);
-        tokenManager.updateFeeAmountRange(
-            FeeAmountRangeOpMessage({minimumAmount: 0, maximumAmount: 0})
-        );
+        tokenManager.updateFeeAmountRange(FeeAmountRangeOp({minimumAmount: 0, maximumAmount: 0}));
     }
 
     function test_updateFeeAmountRange_properlyExecuted(
@@ -482,7 +460,7 @@ contract TokenManagerTest is
 
         vm.prank(bridgeMediator);
         tokenManager.updateFeeAmountRange(
-            FeeAmountRangeOpMessage({minimumAmount: minAmount, maximumAmount: maxAmount})
+            FeeAmountRangeOp({minimumAmount: minAmount, maximumAmount: maxAmount})
         );
     }
 

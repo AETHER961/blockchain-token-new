@@ -18,15 +18,15 @@ import {
 
 import {OpType} from "agau-common/admin-ops/OpsTypes.sol";
 import {
-    CommonTokenOpMessage,
-    TokenManagementOpMessage,
-    BurnTokenOpMessage,
-    TokenTransferOpMessage,
-    CreateFeeDiscountGroupOpMessage,
-    UpdateFeeDiscountGroupOpMessage,
-    UserDiscountGroupOpMessage,
-    TransactionFeeRateOpMessage,
-    FeeAmountRangeOpMessage
+    CommonTokenOp,
+    TokenManagementOp,
+    BurnTokenOp,
+    TokenTransferOp,
+    CreateFeeDiscountGroupOp,
+    UpdateFeeDiscountGroupOp,
+    UserDiscountGroupOp,
+    TransactionFeeRateOp,
+    FeeAmountRangeOp
 } from "agau-common-bridge/TokenOpTypes.sol";
 import {
     DISCOUNT_RATE_DENOMINATOR,
@@ -47,7 +47,7 @@ import {
 } from "agau-common/tokens-management/redemption/interface/IRedemptionCallback.sol";
 
 contract TokenManager_MintAndLockTokens is TokenManager_InitSetup {
-    CommonTokenOpMessage[] internal _msgs;
+    CommonTokenOp[] internal _msgs;
 
     function test_revertsWhen_callerNotBridge() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -106,7 +106,7 @@ contract TokenManager_ReleaseTokens is TokenManager_TokensMintedAndLocked_Single
 }
 
 contract TokenManager_BurnTokens is TokenManager_TokensReceivedForRedemption_MultipleMessages {
-    BurnTokenOpMessage[] internal _msgs;
+    BurnTokenOp[] internal _msgs;
 
     function test_revertsWhen_callerNotOwner() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -180,7 +180,7 @@ contract TokenManager_RefundTokens is TokenManager_TokensReceivedForRedemption_M
 }
 
 contract TokenManager_FreezeTokens is TokenManager_TokensReleased_SingleMessage {
-    TokenManagementOpMessage internal _msg;
+    TokenManagementOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -227,7 +227,7 @@ contract TokenManager_UnfreezeTokens is TokenManager_TokensFrozen {
 }
 
 contract TokenManager_SeizeTokens is TokenManager_TokensFrozen {
-    TokenTransferOpMessage internal _msg;
+    TokenTransferOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -256,7 +256,7 @@ contract TokenManager_SeizeTokens is TokenManager_TokensFrozen {
 }
 
 contract TokenManager_TransferTokens is TokenManager_TokensReceivedForRedemption_SingleMessage {
-    TokenTransferOpMessage internal _msg;
+    TokenTransferOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -283,7 +283,7 @@ contract TokenManager_TransferTokens is TokenManager_TokensReceivedForRedemption
 }
 
 contract TokenManager_CreateDiscountGroup is TokenManager_InitSetup {
-    CreateFeeDiscountGroupOpMessage internal _msg;
+    CreateFeeDiscountGroupOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -308,7 +308,7 @@ contract TokenManager_CreateDiscountGroup is TokenManager_InitSetup {
 }
 
 contract TokenManager_UpdateDiscountGroup is TokenManager_FeeDiscountGroupCreated {
-    UpdateFeeDiscountGroupOpMessage internal _msg;
+    UpdateFeeDiscountGroupOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -338,7 +338,7 @@ contract TokenManager_UpdateDiscountGroup is TokenManager_FeeDiscountGroupCreate
 }
 
 contract TokenManager_SetUserDiscountGroup is TokenManager_FeeDiscountGroupCreated {
-    UserDiscountGroupOpMessage internal _msg;
+    UserDiscountGroupOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -366,7 +366,7 @@ contract TokenManager_SetUserDiscountGroup is TokenManager_FeeDiscountGroupCreat
 }
 
 contract TokenManager_UpdateTransactionFeeRate is TokenManager_InitSetup {
-    TransactionFeeRateOpMessage internal _msg;
+    TransactionFeeRateOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));
@@ -390,7 +390,7 @@ contract TokenManager_UpdateTransactionFeeRate is TokenManager_InitSetup {
 }
 
 contract TokenManager_UpdateFeeAmountRange is TokenManager_InitSetup {
-    FeeAmountRangeOpMessage internal _msg;
+    FeeAmountRangeOp internal _msg;
 
     function test_revertsWhen_callerNotBridgeMediator() public {
         vm.expectRevert(abi.encodeWithSelector(BridgeInteractor.CallerNotMediator.selector));

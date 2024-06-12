@@ -2,18 +2,10 @@
 pragma solidity 0.8.22;
 
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-// import {CallGuardUpgradeable} from "../../lib/agau-common/common/CallGuardUpgradeable.sol";
-// import {AuthorizationGuard} from "./roles/AuthorizationGuard.sol";
 import {AuthorizationGuardAccess} from "./roles/AuthorizationGuardAccess.sol";
 
 import {FeesWhitelist} from "contracts/management/fees/FeesWhitelist.sol";
 import {TxFeeManager} from "contracts/management/fees/TxFeeManager.sol";
-// import {
-//     WhitelistGroupType,
-//     Discount,
-//     DiscountType
-// } from "lib/agau-common/admin-ops/WhitelistTypes.sol";
-
 import {WhitelistTypes} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
 
 /**
@@ -24,8 +16,6 @@ import {WhitelistTypes} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
 contract FeesManager is Initializable, AuthorizationGuardAccess, FeesWhitelist, TxFeeManager {
     /// @dev Fees wallet address
     address private _feesWallet;
-
-    // AuthorizationGuard private authorizationGuard;
 
     /// @dev Emitted when the address of the fees wallet has changed
     /// @param newFeesWallet New address of the fees wallet
@@ -48,7 +38,6 @@ contract FeesManager is Initializable, AuthorizationGuardAccess, FeesWhitelist, 
         address[] calldata zeroFeeAccounts_,
         address authorizationGuardAddress_
     ) external initializer {
-        // __CallGuard_init(msg.sender);
         __AuthorizationGuardAccess_init(authorizationGuardAddress_);
         __FeesWhitelist_init(zeroFeeAccounts_, authorizationGuardAddress_);
         __TxFeeManager_init(txFeeRate_, minTxFee_, maxTxFee_, authorizationGuardAddress_);

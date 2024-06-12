@@ -2,10 +2,7 @@
 pragma solidity 0.8.22;
 
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-// import {TX_FEE_DENOMINATOR} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
 import {WhitelistTypes} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
-
-// import {AuthorizationGuardAccess} from "../roles/AuthorizationGuardAccess.sol";
 import {AuthorizationGuard} from "../roles/AuthorizationGuard.sol";
 
 /**

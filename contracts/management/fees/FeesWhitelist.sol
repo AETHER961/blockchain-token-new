@@ -1,23 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.22;
 
-// import {CallGuardUpgradeable} from "lib/agau-common/common/CallGuardUpgradeable.sol";
 import {WhitelistTypes} from "lib/agau-common/admin-ops/WhitelistTypes.sol";
-// import {AuthorizationGuardAccess} from "../roles/AuthorizationGuardAccess.sol";
 import {AuthorizationGuard} from "../roles/AuthorizationGuard.sol";
-// import {
-//     DISCOUNT_RATE_DENOMINATOR,
-//     WhitelistGroupType,
-//     Discount,
-//     DiscountType
-// } from "lib/agau-common/admin-ops/WhitelistTypes.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 /**
  * @title FeesWhitelist
  * @author
  * @dev Contract for managing fee discounts and their assignment to users
  */
-abstract contract FeesWhitelist {
+abstract contract FeesWhitelist is Initializable {
     /// @dev Identifier of the special AgAu group created during intialization. Has 100% discount
     uint256 public constant SPECIAL_AGAU_GROUP_ID = 1;
 
@@ -84,8 +77,7 @@ abstract contract FeesWhitelist {
     function __FeesWhitelist_init(
         address[] memory zeroFeesAccounts,
         address authorizationGuardAddress
-    ) internal {
-        //onlyInitializing
+    ) internal onlyInitializing {
         // Create a special group for AgAu wallets which should not have any fees
         _createDiscountGroup(
             WhitelistTypes.GroupType.TxFee,

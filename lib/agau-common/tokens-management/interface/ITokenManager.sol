@@ -12,37 +12,33 @@ import {TokenOpTypes} from "../../../agau-types/TokenOpTypes.sol";
 interface ITokenManager {
     /// @dev Mints and locks the tokens based on the data provided via `messages`.
     /// @param messages The messages being passed
-    function mintAndLockTokens(
-        TokenOpTypes.CommonTokenOpMessageWithSignature[] memory messages
-    ) external;
+    function mintAndLockTokens(TokenOpTypes.CommonTokenOpWithSignature[] memory messages) external;
 
     /// @dev Releases tokens based on the data provided via `messages`.
     /// @param messages The messages being passed
-    function releaseTokens(
-        TokenOpTypes.CommonTokenOpMessageWithSignature[] memory messages
-    ) external;
+    function releaseTokens(TokenOpTypes.CommonTokenOpWithSignature[] memory messages) external;
 
     /// @dev Burns tokens based on the data provided via `messages`.
     /// @param messages The messages being passed
-    function burnTokens(TokenOpTypes.BurnTokenOpMessageWithSignature[] memory messages) external;
+    function burnTokens(TokenOpTypes.BurnTokenOpWithSignature[] memory messages) external;
 
     /// @dev Refunds tokens based on the data provided via `messages`.
     /// @param messages The messages being passed
-    function refundTokens(TokenOpTypes.CommonTokenOpMessage[] memory messages) external;
+    function refundTokens(TokenOpTypes.CommonTokenOp[] memory messages) external;
 
     /// @dev Freezes tokens based on the data provided via `message`.
     /// @param message The message being passed
-    function freezeTokens(TokenOpTypes.TokenManagementOpMessage memory message) external;
+    function freezeTokens(TokenOpTypes.TokenManagementOp memory message) external;
 
     /// @dev Unfreezes tokens based on the data provided via `message`.
     /// @param message The message being passed
-    function unfreezeTokens(TokenOpTypes.TokenManagementOpMessage memory message) external;
+    function unfreezeTokens(TokenOpTypes.TokenManagementOp memory message) external;
 
     /// @dev Seizes tokens based on the data provided via `message`.
     /// @param message The message being passed
-    function seizeTokens(TokenOpTypes.TokenTransferOpMessage memory message) external;
+    function seizeTokens(TokenOpTypes.TokenTransferOp memory message) external;
 
     /// @dev Transfers tokens based on the data provided via `message`.
     /// @param message The message being passed
-    function transferTokens(TokenOpTypes.TokenTransferOpMessage memory message) external;
+    function transferTokens(TokenOpTypes.TokenTransferOp memory message) external;
 }

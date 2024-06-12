@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 /**
  * @title WhitelistTypes
  * @author
- * @dev Library with types used in by the contracts on both sides of the bridge
+ * @dev Library with types used by the contracts.
  *      Used mainly for the discount groups operations and management
  */
 library WhitelistTypes {

@@ -12,19 +12,19 @@ import {
 } from "tests/sol/scenarios/TokenManagerScenarios.t.sol";
 
 import {
-    CommonTokenOpMessage,
-    BurnTokenOpMessage,
-    TokenManagementOpMessage,
-    TokenTransferOpMessage,
-    CreateFeeDiscountGroupOpMessage,
-    UpdateFeeDiscountGroupOpMessage,
-    UserDiscountGroupOpMessage,
-    TransactionFeeRateOpMessage,
-    FeeAmountRangeOpMessage
+    CommonTokenOp,
+    BurnTokenOp,
+    TokenManagementOp,
+    TokenTransferOp,
+    CreateFeeDiscountGroupOp,
+    UpdateFeeDiscountGroupOp,
+    UserDiscountGroupOp,
+    TransactionFeeRateOp,
+    FeeAmountRangeOp
 } from "agau-common/bridge/TokenOpTypes.sol";
 
 contract Gas_TokenManager_mintAndLockTokens is TokenManager_InitSetup {
-    CommonTokenOpMessage[] internal _commonMsgs;
+    CommonTokenOp[] internal _commonMsgs;
 
     function setUp() public virtual override {
         super.setUp();
@@ -51,7 +51,7 @@ contract Gas_TokenManager_releaseTokens is TokenManager_TokensMintedAndLocked_Si
 }
 
 contract Gas_TokenManager_burnTokens is TokenManager_TokensReceivedForRedemption_SingleMessage {
-    BurnTokenOpMessage[] internal _burnMsgs;
+    BurnTokenOp[] internal _burnMsgs;
 
     function setUp() public virtual override {
         super.setUp();
@@ -79,7 +79,7 @@ contract Gas_TokenManager_refundTokens is TokenManager_TokensReceivedForRedempti
 }
 
 contract Gas_TokenManager_freezeTokens is TokenManager_TokensReleased_SingleMessage {
-    TokenManagementOpMessage internal _tokenManagementMsg;
+    TokenManagementOp internal _tokenManagementMsg;
 
     function setUp() public virtual override {
         super.setUp();
@@ -107,7 +107,7 @@ contract Gas_TokenManager_unfreezeTokens is TokenManager_TokensFrozen {
 }
 
 contract Gas_TokenManager_seizeTokens is TokenManager_TokensFrozen {
-    TokenTransferOpMessage internal _seizeTokensMsg;
+    TokenTransferOp internal _seizeTokensMsg;
 
     function setUp() public virtual override {
         super.setUp();
@@ -123,7 +123,7 @@ contract Gas_TokenManager_seizeTokens is TokenManager_TokensFrozen {
 }
 
 contract Gas_TokenManager_transferTokens is TokenManager_TokensReceivedForRedemption_SingleMessage {
-    TokenTransferOpMessage internal _transferTokensMsg;
+    TokenTransferOp internal _transferTokensMsg;
 
     function setUp() public virtual override {
         super.setUp();
@@ -139,7 +139,7 @@ contract Gas_TokenManager_transferTokens is TokenManager_TokensReceivedForRedemp
 }
 
 contract Gas_TokenManager_createDiscountGroup is TokenManager_InitSetup {
-    CreateFeeDiscountGroupOpMessage internal _generatedMessage;
+    CreateFeeDiscountGroupOp internal _generatedMessage;
 
     function setUp() public virtual override {
         super.setUp();
@@ -153,7 +153,7 @@ contract Gas_TokenManager_createDiscountGroup is TokenManager_InitSetup {
 }
 
 contract Gas_TokenManager_updateDiscountGroup is TokenManager_FeeDiscountGroupCreated {
-    UpdateFeeDiscountGroupOpMessage internal _generatedMessage;
+    UpdateFeeDiscountGroupOp internal _generatedMessage;
 
     function setUp() public virtual override {
         super.setUp();
@@ -168,7 +168,7 @@ contract Gas_TokenManager_updateDiscountGroup is TokenManager_FeeDiscountGroupCr
 }
 
 contract Gas_TokenManager_setUserDiscountGroup is TokenManager_FeeDiscountGroupCreated {
-    UserDiscountGroupOpMessage internal _generatedMessage;
+    UserDiscountGroupOp internal _generatedMessage;
 
     function setUp() public virtual override {
         super.setUp();
@@ -183,7 +183,7 @@ contract Gas_TokenManager_setUserDiscountGroup is TokenManager_FeeDiscountGroupC
 }
 
 contract Gas_TokenManager_updateTransactionFeeRate is TokenManager_InitSetup {
-    TransactionFeeRateOpMessage internal _generatedMessage;
+    TransactionFeeRateOp internal _generatedMessage;
 
     function setUp() public virtual override {
         super.setUp();
@@ -198,7 +198,7 @@ contract Gas_TokenManager_updateTransactionFeeRate is TokenManager_InitSetup {
 }
 
 contract Gas_TokenManager_updateFeeAmountRange is TokenManager_InitSetup {
-    FeeAmountRangeOpMessage internal _generatedMessage;
+    FeeAmountRangeOp internal _generatedMessage;
 
     function setUp() public virtual override {
         super.setUp();

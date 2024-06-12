@@ -215,7 +215,7 @@ export const fullDeploy = async (): Promise<void> => {
         await tokenFactory.tokenForId(TokenIdentifier.Silver),
     );
 
-    console.log(`Gold MetalToken deployed at ${silverToken.target}`);
+    console.log(`Silver MetalToken deployed at ${silverToken.target}`);
 
     const routingConfig = await generateIncomingRoutingConfig({
         tokenManager: tokenManager.target,

@@ -14,17 +14,17 @@ library TokenOpTypes {
         RELEASE_OP
     }
 
-    /// @dev Structure containing common token management message data
-    struct CommonTokenOpMessage {
-        // Account address message is referred to
+    /// @dev Structure containing common token management instruction
+    struct CommonTokenOp {
+        // Account address to receive token
         address account;
         // Total amount of the metal (in grams)
         uint48 weight;
         // Metal identifier
         uint8 metalId;
     }
-    struct CommonTokenOpMessageWithSignature {
-        // Account address message is referred to
+    struct CommonTokenOpWithSignature {
+        // Account address to receive token
         address account;
         // Total amount of the metal (in grams)
         uint48 weight;
@@ -40,7 +40,7 @@ library TokenOpTypes {
     }
 
     struct CommonTokenOpSignatureData {
-        // Account address message is referred to
+        // Account address to receive token
         address account;
         // Total amount of the metal (in grams)
         uint48 weight;
@@ -50,14 +50,14 @@ library TokenOpTypes {
         string documentHash;
     }
 
-    /// @dev Structure containing token burn message data
-    struct BurnTokenOpMessage {
+    /// @dev Structure containing token burn instruction
+    struct BurnTokenOp {
         // Total amount of the metal (in grams)
         uint48 weight;
         // Metal identifier
         uint8 metalId;
     }
-    struct BurnTokenOpMessageWithSignature {
+    struct BurnTokenOpWithSignature {
         // Total amount of the metal (in grams)
         uint48 weight;
         // Metal identifier
@@ -70,8 +70,8 @@ library TokenOpTypes {
         uint256[] roleIndices;
     }
 
-    /// @dev Structure containing token management message data
-    struct TokenManagementOpMessage {
+    /// @dev Structure containing token management instruction
+    struct TokenManagementOp {
         // Account address message is referred to
         address user;
         // Amount of tokens
@@ -80,8 +80,8 @@ library TokenOpTypes {
         uint8 metalId;
     }
 
-    /// @dev Structure containing token seize message data
-    struct TokenTransferOpMessage {
+    /// @dev Structure containing token seize instruction
+    struct TokenTransferOp {
         // Account address whose tokens will be seized
         address from;
         // Address to which seized tokens will be moved
@@ -92,16 +92,16 @@ library TokenOpTypes {
         uint8 metalId;
     }
 
-    /// @dev Structure containing create fee discount group message data
-    struct CreateFeeDiscountGroupOpMessage {
+    /// @dev Structure containing create fee discount group instruction
+    struct CreateFeeDiscountGroupOp {
         // Discount group type
         WhitelistTypes.GroupType groupType;
         // Discount group configuration
         WhitelistTypes.Discount discount;
     }
 
-    /// @dev Structure containing update fee discount group message data
-    struct UpdateFeeDiscountGroupOpMessage {
+    /// @dev Structure containing update fee discount group instruction
+    struct UpdateFeeDiscountGroupOp {
         // Discount group type
         WhitelistTypes.GroupType groupType;
         // Discount group configuration
@@ -110,8 +110,8 @@ library TokenOpTypes {
         uint256 groupId;
     }
 
-    /// @dev Structure containing assign group to a user message data
-    struct UserDiscountGroupOpMessage {
+    /// @dev Structure containing assign group to a user instruction
+    struct UserDiscountGroupOp {
         // Discount group type
         WhitelistTypes.GroupType groupType;
         // Discount group id
@@ -120,14 +120,14 @@ library TokenOpTypes {
         address user;
     }
 
-    /// @dev Structure containing transaction fee rate message data
-    struct TransactionFeeRateOpMessage {
+    /// @dev Structure containing transaction fee rate
+    struct TransactionFeeRateOp {
         // Transaction fee rate
         uint256 feeRate;
     }
 
-    /// @dev Structure containing fee amount range message data
-    struct FeeAmountRangeOpMessage {
+    /// @dev Structure containing fee amount range
+    struct FeeAmountRangeOp {
         // Minimum amount of the fee
         uint256 minimumAmount;
         // Maximum amount of the fee

@@ -2,6 +2,7 @@
 pragma solidity 0.8.22;
 
 /**
+ * Deprecated
  * @title IOpsRecovery
  * @author
  * @dev Interface containing methods for admin ops processes recovery in case of bridge message failure
