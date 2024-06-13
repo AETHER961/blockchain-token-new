@@ -35,8 +35,6 @@ library TokenOpTypes {
         bytes32 signatureHash;
         // Submitted signatures
         bytes[] signatures;
-        // Signer index in roles array
-        uint256[] roleIndices;
     }
 
     struct CommonTokenOpSignatureData {
@@ -56,18 +54,6 @@ library TokenOpTypes {
         uint48 weight;
         // Metal identifier
         uint8 metalId;
-    }
-    struct BurnTokenOpWithSignature {
-        // Total amount of the metal (in grams)
-        uint48 weight;
-        // Metal identifier
-        uint8 metalId;
-        // Message Hash
-        bytes32 signatureHash;
-        // Submitted signatures
-        bytes[] signatures;
-        // Signer index in roles array
-        uint256[] roleIndices;
     }
 
     /// @dev Structure containing token management instruction

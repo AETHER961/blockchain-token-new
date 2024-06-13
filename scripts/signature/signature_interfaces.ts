@@ -17,4 +17,5 @@ export interface CommonOpMessage {
 export interface SignerEntityStruct {
     signerAddress: AddressLike;
     roleName: string;
+    operationType: number;
 }

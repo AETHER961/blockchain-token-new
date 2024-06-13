@@ -48,7 +48,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         __AuthorizationGuardAccess_init(authorizationGuardAddress_);
     }
 
-    // signers => global group
     /// @inheritdoc ITokenManager
     function mintAndLockTokens(
         TokenOpTypes.CommonTokenOpWithSignature[] calldata instructions
@@ -70,7 +69,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         }
     }
 
-    // signers => auditor only
     /// @inheritdoc ITokenManager
     function releaseTokens(
         TokenOpTypes.CommonTokenOpWithSignature[] calldata instructions
@@ -92,10 +90,9 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         }
     }
 
-    // no signers
     /// @inheritdoc ITokenManager
     function burnTokens(
-        TokenOpTypes.BurnTokenOpWithSignature[] calldata instructions
+        TokenOpTypes.BurnTokenOp[] calldata instructions
     ) external onlyAuthorizedAccess {
         for (uint256 i; i < instructions.length; ++i) {
             MetalToken token = _tokenFactory.tokenForId(instructions[i].metalId);
@@ -124,7 +121,6 @@ contract TokenManager is AuthorizationGuardAccess, ITokenManager, IFeesWhitelist
         token.lock(instruction.user, instruction.amount);
     }
 
-    // signer => auditor
     /// @inheritdoc ITokenManager
     function unfreezeTokens(
         TokenOpTypes.TokenManagementOp calldata instruction
