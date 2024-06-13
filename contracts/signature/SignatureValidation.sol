@@ -5,9 +5,11 @@ import {AuthorizationGuardAccess} from "../management/roles/AuthorizationGuardAc
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {TokenOpTypes} from "lib/agau-types/TokenOpTypes.sol";
 
-/*
-    * Pass to the constructor the number of required signatures and the authorization guard address.
-
+/**
+ * @title MultiSigValidation
+ * @dev MultiSigValidation is a contract for managing multi-signature validation,
+ * signers, and roles for different operation types.
+ * Inherits from AuthorizationGuardAccess to leverage role-based access control.
  */
 contract MultiSigValidation is AuthorizationGuardAccess {
     using ECDSA for bytes32;
@@ -20,12 +22,19 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     struct SignerEntity {
         address signerAddress;
         string roleName;
+        TokenOpTypes.OpType operationType;
     }
 
-    mapping(TokenOpTypes.OpType => Role[]) public roles;
+    struct UpdateSignerEntity {
+        address currentSigner;
+        address newSigner;
+        TokenOpTypes.OpType operationType;
+    }
+
+    mapping(TokenOpTypes.OpType => mapping(address => string)) public roles;
     mapping(TokenOpTypes.OpType => uint256) public requiredSignatures;
 
-    mapping(bytes32 => mapping(uint256 => bool)) public signatures;
+    mapping(TokenOpTypes.OpType => mapping(bytes32 => mapping(address => bool))) public signatures;
     mapping(bytes32 => uint256) public signatureCount;
     mapping(bytes32 => bool) public usedHashes;
 
@@ -35,37 +44,43 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         bytes32 operationMessageHash,
         bytes[] signatures
     );
-    event SignatureReceived(address signer, bytes32 hash, uint256 roleIndex);
-    event RoleAdded(string roleName, address signerAddress);
-    event SignerUpdated(uint256 roleIndex, address newSigner);
+    event SignatureReceived(address signer, bytes32 hash, string roleName);
+    event SignerAdded(string roleName, address signerAddress, TokenOpTypes.OpType operationType);
+    event SignerRemoved(string roleName, address signerAddress, TokenOpTypes.OpType operationType);
+    event SignerUpdated(
+        string roleName,
+        address newSigner,
+        address previousSigner,
+        TokenOpTypes.OpType operationType
+    );
 
+    /**
+     * @dev Initializes the contract by setting the authorization guard address and adding initial signers.
+     * @param _authorizationGuardAddress Address of the authorization guard.
+     * @param _mintSigners Array of initial mint signers.
+     * @param _releaseSigners Array of initial release signers.
+     */
     constructor(
         address _authorizationGuardAddress,
         SignerEntity[] memory _mintSigners,
         SignerEntity[] memory _releaseSigners
     ) {
         __AuthorizationGuardAccess_init(_authorizationGuardAddress);
+        require(_mintSigners.length > 0, "No mint signers specified");
+        require(_releaseSigners.length > 0, "No release signers specified");
 
-        /// Setup mint signers
-        for (uint8 i = 0; i < _mintSigners.length; i++) {
-            requiredSignatures[TokenOpTypes.OpType.MINT_OP]++;
-            addRole(
-                _mintSigners[i].roleName,
-                _mintSigners[i].signerAddress,
-                TokenOpTypes.OpType.MINT_OP
-            );
-        }
-        /// Setup release signers
-        for (uint8 i = 0; i < _releaseSigners.length; i++) {
-            requiredSignatures[TokenOpTypes.OpType.RELEASE_OP]++;
-            addRole(
-                _releaseSigners[i].roleName,
-                _releaseSigners[i].signerAddress,
-                TokenOpTypes.OpType.RELEASE_OP
-            );
-        }
+        requiredSignatures[TokenOpTypes.OpType.MINT_OP] += _mintSigners.length;
+        addSigners(_mintSigners);
+        requiredSignatures[TokenOpTypes.OpType.RELEASE_OP] += _releaseSigners.length;
+        addSigners(_releaseSigners);
     }
 
+    /**
+     * @dev Generates a hash of the common operation message.
+     * @param functionName Name of the function to be included in the hash.
+     * @param message Struct containing common token operation signature data.
+     * @return Hash of the common operation message.
+     */
     function getMessageHashCommon(
         string memory functionName,
         TokenOpTypes.CommonTokenOpSignatureData memory message
@@ -82,38 +97,33 @@ contract MultiSigValidation is AuthorizationGuardAccess {
             );
     }
 
-    function getMessageHashBurn(
-        string memory functionName,
-        TokenOpTypes.BurnTokenOpWithSignature memory message
-    ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(functionName, message.weight, message.metalId));
-    }
-
+    /**
+     * @dev Verifies the signatures for a common operation.
+     * @param functionName Name of the function for which the signature is being verified.
+     * @param operationType Type of the operation.
+     * @param instruction Struct containing common token operation signature data.
+     * @return True if the signatures are valid, false otherwise.
+     */
     function verifyCommonOpSignature(
         string memory functionName,
         TokenOpTypes.OpType operationType,
-        TokenOpTypes.CommonTokenOpWithSignature memory message
+        TokenOpTypes.CommonTokenOpWithSignature memory instruction
     ) external onlyTrustedContracts returns (bool) {
         bytes32 _hash = getMessageHashCommon(
             functionName,
             TokenOpTypes.CommonTokenOpSignatureData({
-                account: message.account,
-                weight: message.weight,
-                metalId: message.metalId,
-                documentHash: message.documentHash
+                account: instruction.account,
+                weight: instruction.weight,
+                metalId: instruction.metalId,
+                documentHash: instruction.documentHash
             })
         );
         bytes32 prefixedHash = keccak256(
             abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash)
         );
-        require(prefixedHash == message.signatureHash, "Invalid hash");
+        require(prefixedHash == instruction.signatureHash, "Invalid hash");
 
-        bool isValid = validateSignatures(
-            prefixedHash,
-            message.signatures,
-            message.roleIndices,
-            operationType
-        );
+        bool isValid = validateSignatures(prefixedHash, instruction.signatures, operationType);
 
         // Ensure that the validation was successful
         require(isValid, "Invalid signatures");
@@ -121,32 +131,34 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         return true;
     }
 
+    /**
+     * @dev Validates the signatures for a given hash and operation type.
+     * @param _hash Hash of the operation message.
+     * @param signaturesArray Array of signatures to be validated.
+     * @param operationType Type of the operation.
+     * @return True if the signatures are valid, false otherwise.
+     */
     function validateSignatures(
         bytes32 _hash,
         bytes[] memory signaturesArray,
-        uint256[] memory roleIndices,
         TokenOpTypes.OpType operationType
     ) internal returns (bool) {
         require(
             signaturesArray.length == requiredSignatures[operationType],
             "Not enough signatures"
         );
-        require(
-            signaturesArray.length == roleIndices.length,
-            "Mismatching signature and roles length"
-        );
+
         require(!usedHashes[_hash], "Hash has already been used for minting");
 
         for (uint256 i = 0; i < signaturesArray.length; i++) {
             address signer = recoverSigner(_hash, signaturesArray[i]);
-            uint256 roleIndex = roleIndices[i];
-            require(isSignerRole(signer, roleIndex, operationType), "Invalid signer for role");
-            require(!signatures[_hash][roleIndex], "Signature for role already used");
+            require(isSigner(signer, operationType), "Invalid signer for role");
+            require(!signatures[operationType][_hash][signer], "Signature for role already used");
 
-            signatures[_hash][roleIndex] = true;
+            signatures[operationType][_hash][signer] = true;
             signatureCount[_hash]++;
 
-            emit SignatureReceived(signer, _hash, roleIndex);
+            emit SignatureReceived(signer, _hash, getRole(operationType, signer));
         }
 
         require(
@@ -161,27 +173,27 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         return true;
     }
 
+    /**
+     * @dev Checks if an address is a signer for a specific operation type.
+     * @param _address Address to be checked.
+     * @param operationType Type of the operation.
+     * @return True if the address is a signer, false otherwise.
+     */
     function isSigner(
         address _address,
         TokenOpTypes.OpType operationType
     ) public view returns (bool) {
-        for (uint256 i = 0; i < roles[operationType].length; i++) {
-            if (roles[operationType][i].signerAddress == _address) {
-                return true;
-            }
-        }
-        return false;
+        string memory roleName = roles[operationType][_address];
+
+        return keccak256(abi.encodePacked(roleName)) != keccak256(abi.encodePacked(""));
     }
 
-    function isSignerRole(
-        address _address,
-        uint256 roleIndex,
-        TokenOpTypes.OpType operationType
-    ) public view returns (bool) {
-        require(roleIndex < roles[operationType].length, "Invalid role index");
-        return roles[operationType][roleIndex].signerAddress == _address;
-    }
-
+    /**
+     * @dev Recovers the signer's address from the hash and signature.
+     * @param _hash Hash of the signed message.
+     * @param signature Signature to be recovered.
+     * @return Address of the signer.
+     */
     function recoverSigner(bytes32 _hash, bytes memory signature) internal pure returns (address) {
         bytes32 messageDigest = keccak256(
             abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash)
@@ -189,28 +201,80 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         return messageDigest.recover(signature);
     }
 
-    function addRole(
-        string memory roleName,
-        address signerAddress,
-        TokenOpTypes.OpType operationType
-    ) public onlyAdminAccess {
-        roles[operationType].push(Role(roleName, signerAddress));
-        emit RoleAdded(roleName, signerAddress);
+    /**
+     * @dev Adds new signers to the roles mapping.
+     * @param signers Array of signers to be added.
+     */
+    function addSigners(SignerEntity[] memory signers) public onlyAdminAccess {
+        for (uint32 i = 0; i < signers.length; i++) {
+            if (!isSigner(signers[i].signerAddress, signers[i].operationType)) {
+                roles[signers[i].operationType][signers[i].signerAddress] = signers[i].roleName;
+                emit SignerAdded(
+                    signers[i].roleName,
+                    signers[i].signerAddress,
+                    signers[i].operationType
+                );
+            }
+        }
     }
 
-    function updateSigner(
-        uint256 roleIndex,
-        address newSigner,
-        TokenOpTypes.OpType operationType
-    ) public onlyAdminAccess {
-        require(roleIndex < roles[operationType].length, "Invalid role index");
-        require(!isSigner(newSigner, operationType), "New signer is already a signer");
-
-        roles[operationType][roleIndex].signerAddress = newSigner;
-        emit SignerUpdated(roleIndex, newSigner);
+    /**
+     * @dev Removes signers from the roles mapping.
+     * @param signers Array of signers to be removed.
+     */
+    function removeSigners(SignerEntity[] memory signers) public onlyAdminAccess {
+        for (uint32 i = 0; i < signers.length; i++) {
+            if (isSigner(signers[i].signerAddress, signers[i].operationType)) {
+                roles[signers[i].operationType][signers[i].signerAddress] = "";
+                emit SignerRemoved(
+                    signers[i].roleName,
+                    signers[i].signerAddress,
+                    signers[i].operationType
+                );
+            }
+        }
     }
 
-    function getRoles(TokenOpTypes.OpType operationType) public view returns (Role[] memory) {
-        return roles[operationType];
+    /**
+     * @dev Updates signers in the roles mapping.
+     * @param updateInstructions Array of instructions to update signers.
+     */
+    function updateSigner(UpdateSignerEntity[] memory updateInstructions) public onlyAdminAccess {
+        for (uint32 i = 0; i < updateInstructions.length; i++) {
+            require(
+                isSigner(updateInstructions[i].currentSigner, updateInstructions[i].operationType),
+                "Address for current signer is not a signer"
+            );
+            require(
+                !isSigner(updateInstructions[i].newSigner, updateInstructions[i].operationType),
+                "New signer is already a signer"
+            );
+
+            roles[updateInstructions[i].operationType][updateInstructions[i].newSigner] = roles[
+                updateInstructions[i].operationType
+            ][updateInstructions[i].currentSigner];
+
+            roles[updateInstructions[i].operationType][updateInstructions[i].currentSigner] = "";
+
+            emit SignerUpdated(
+                roles[updateInstructions[i].operationType][updateInstructions[i].newSigner],
+                updateInstructions[i].newSigner,
+                updateInstructions[i].currentSigner,
+                updateInstructions[i].operationType
+            );
+        }
+    }
+
+    /**
+     * @dev Retrieves the role of a signer for a specific operation type.
+     * @param operationType Type of the operation.
+     * @param signer Address of the signer.
+     * @return Role of the signer.
+     */
+    function getRole(
+        TokenOpTypes.OpType operationType,
+        address signer
+    ) public view returns (string memory) {
+        return roles[operationType][signer];
     }
 }
