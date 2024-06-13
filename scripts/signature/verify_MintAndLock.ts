@@ -5,8 +5,8 @@ import { ethers } from "hardhat";
 import { CommonOpMessage } from "./signature_interfaces";
 
 // Setup TokenManager address and Signature contract address
-const tokenManagerAddress = "0xeF1f6A4dFb38e5b0eBa942a1aD01230f30d68326";
-const signatureContractAddress = "0xED24c72DfD37A6Be2912AF249Aa2734f65FFCeE6"
+const tokenManagerAddress = "0x0Dc069eFe29C1a7E7786CBEc12080dd6F33168D5";
+const signatureContractAddress = "0x85b635cA25D7F3Be78De12a3d7a5588D243a9877"
 
 // Define message to sign for gold token minting
 const message_GoldToken: CommonOpMessage = {

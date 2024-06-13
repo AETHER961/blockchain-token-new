@@ -4,10 +4,10 @@ import { CommonOpMessage } from "./signature_interfaces";
 import { Wallet } from "ethers";
 
 // Connect to the Ethereum provider
-const provider = ethers.getDefaultProvider('sepolia'); // or your preferred network
+// const provider = ethers.getDefaultProvider('sepolia'); // or your preferred network
 
 // Connect to the BSC provider
-// const provider = new ethers.JsonRpcProvider(process.env.BSC_NODE_URL);
+const provider = new ethers.JsonRpcProvider(process.env.BSC_NODE_URL);
 
 // Parse the array of private keys from the environment variable
 const privateKeys = process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : [];

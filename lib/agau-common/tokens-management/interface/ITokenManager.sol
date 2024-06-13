@@ -20,7 +20,7 @@ interface ITokenManager {
 
     /// @dev Burns tokens based on the data provided via `messages`.
     /// @param messages The messages being passed
-    function burnTokens(TokenOpTypes.BurnTokenOpWithSignature[] memory messages) external;
+    function burnTokens(TokenOpTypes.BurnTokenOp[] memory messages) external;
 
     /// @dev Refunds tokens based on the data provided via `messages`.
     /// @param messages The messages being passed

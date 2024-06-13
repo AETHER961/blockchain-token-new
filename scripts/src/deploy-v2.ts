@@ -12,6 +12,7 @@ import { getAMBContract, getForeignMediator, getFeeRate, getFeeWallet } from "..
 
 import * as deployment from "../helpers/deploy";
 import { generateIncomingRoutingConfig } from "../config/bridge/config";
+import { SignerEntityStruct } from "../signature/signature_interfaces";
 
 const feesWallet = getFeeWallet();
 
@@ -42,15 +43,15 @@ export const fullDeploy = async (): Promise<void> => {
     // Wallets who must sign the message to authorize a transaction such as `mintAndLockTokens`, `releaseTokens`, `burnTokens`
     const signers = [signer1.address, signer2.address, signer3.address, signer4.address];
 
-    const mintSigners = [
-        { signerAddress: signer1.address, roleName: "Warehouse admin" },
-        { signerAddress: signer2.address, roleName: "Director" },
-        { signerAddress: signer3.address, roleName: "Token manager" },
-        { signerAddress: signer4.address, roleName: "Auditor" },
+    const mintSigners: SignerEntityStruct[] = [
+        { signerAddress: signer1.address, roleName: "Warehouse admin", operationType: 0 },
+        { signerAddress: signer2.address, roleName: "Director", operationType: 0 },
+        { signerAddress: signer3.address, roleName: "Token manager", operationType: 0 },
+        { signerAddress: signer4.address, roleName: "Auditor", operationType: 0 },
     ];
 
-    const releaseSigners = [
-        { signerAddress: signer4.address, roleName: "Auditor" },
+    const releaseSigners: SignerEntityStruct[] = [
+        { signerAddress: signer4.address, roleName: "Auditor", operationType: 1 },
     ];
 
     // Wallets who can call the TokenManager and other contract functions such as `mintAndLockTokens`, `releaseTokens`, should be the backend wallet.
@@ -78,8 +79,6 @@ export const fullDeploy = async (): Promise<void> => {
         // +3 as current nonce +2 (sum +3) is for `FeesManager` deployment and +1 is for `TokenFactory` deployment
         nonce: (await deployer.getNonce()) + 5,
     });
-
-
 
 
     console.log(`Expected token Manager:1`, expectedTokenManagerContractAddress);
