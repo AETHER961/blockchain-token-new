@@ -59,6 +59,7 @@ export async function trackDeployment<T extends BaseContract>(
             const contract = await fn();
 
             const net = await ethers.provider.getNetwork();
+            console.log(`network`, net)
 
             const deploymentTransaction = contract.deploymentTransaction();
 

@@ -199,6 +199,7 @@ export const fullDeploy = async (): Promise<void> => {
                 metalTokenBeacon.target.toString(),
             ),
         });
+
     }
 
     // Must be retrieved like this as these are beacon proxies created during the deployment of `TokenFactory`
@@ -227,11 +228,11 @@ export const fullDeploy = async (): Promise<void> => {
 
 };
 
-fullDeploy().catch((error) => {
-    console.log(`full deploy running...`)
-    console.error(error);
-    process.exitCode = 1;
-});
+// fullDeploy().catch((error) => {
+//     console.log(`full deploy running...`)
+//     console.error(error);
+//     process.exitCode = 1;
+// });
 
 
 // import { ethers } from "hardhat";
