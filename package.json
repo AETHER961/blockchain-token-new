@@ -39,6 +39,8 @@
         "full-deploy-v2-bsc": "npx hardhat run scripts/run-full-deploy-v2.ts --network bsc",
         "full-deploy-v2-local": "npx hardhat run scripts/run-full-deploy-v2.ts --network hardhat",
         "full-deploy:dev": "TENDERLY_AUTO_VERIFY=TRUE npm run full-deploy tenderly",
+        "verify-all-sepolia": "npx hardhat run scripts/verify/verify-all.ts --network sepolia",
+        "verify-all-mainnet": "npx hardhat run scripts/verify/verify-all.ts --network ethereum",
         "test-mintandlock": "npx hardhat run scripts/signature/verify_MintAndLock.ts",
         "transfer-ownership": "npm run dry-run:transfer-ownership && npx hardhat run scripts/run-transfer-ownership.ts --network",
         "prepare-upgrade": "npx hardhat run scripts/prepare-upgrade.ts --network",

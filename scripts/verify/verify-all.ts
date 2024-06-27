@@ -4,12 +4,13 @@ import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 import * as deployment from "../../deployments.json";
 import * as verifyMultiSig from "../../scripts/verify/verify-multisigvalidation";
 import * as verifyAuthorizationGuard from "../../scripts/verify/verify-authorizationguard";
-import * as verifyMetalToken from "../../scripts/verify/verify-metaltoken";
+// import * as verifyMetalToken from "../../scripts/verify/verify-metaltoken";
+import * as verifyMetalToken from "./verify-metalTok";
 import * as verifyFeesManager from "../../scripts/verify/verify-feesmanager";
 import * as verifyTokenFactory from "../../scripts/verify/verify-tokenfactory";
 import * as verifyTokenManager from "../../scripts/verify/verify-tokenmanager";
 
-type NetworkNames = 'bsc' | 'sepolia' | 'hardhat';
+type NetworkNames = 'bsc' | 'sepolia' | 'hardhat' | 'ethereum';
 
 const verificationParams: { [key: string]: any } = {
     'AuthorizationGuard': { func: verifyAuthorizationGuard.main, isProxy: false },
@@ -21,98 +22,82 @@ const verificationParams: { [key: string]: any } = {
     'GoldToken': { func: verifyMetalToken.main, isProxy: true },
     'SilverToken': { func: verifyMetalToken.main, isProxy: true },
 }
+const networks: { [chainId: string]: NetworkNames } = {
+    '11155111': 'sepolia',
+    '1': 'ethereum',
+    '97': 'bsc'
+}
 
 export const verifyAllContracts = async () => {
     try {
+        /** Inputs */
+        // Select network
+        const currentNet = await ethers.provider.getNetwork()
+        const networkName: NetworkNames = networks[currentNet.chainId.toString()];
 
-        const networkName: NetworkNames = 'sepolia';
+        console.log(`>Verifying on ${networkName}.`)
+
+        let deployer;
+        [deployer] = await ethers.getSigners();
+        const deployerAddress = deployer.address
+        console.log(`Deployer address:`, deployerAddress)
+        /**End Inputs */
+
+        // Retrieve contract addresses from deployment json file
         const contractDeployment = deployment.deployments.find((deploymentConf) => deploymentConf.network === networkName);
 
         if (!contractDeployment) throw new Error(`Failed to fetch contract deployment addresses`);
         console.log(`Retrieved contracts for ${networkName}`, contractDeployment);
         for (let contract of contractDeployment?.contracts) {
-            console.log(`Attempting to verify ${contract.name}`);
 
-            let verify;
-            // if (contract.name.includes('Gold') || contract.name.includes('Silver')) {
-            //     console.log(`includes gold or silver_))))0`)
-            //     verify = verificationParams['MetalToken'].func;
-            // }
-            // else {
-            //     if (!verificationParams[contract.name]) {
-            //         throw new Error(`Failed to fetch verification parameters for ${contract.name}`)
-            //     }
-            //     verify = verificationParams[contract.name].func;
-            // }
+            // Verification functions defined above for each contract
+            let verify = verificationParams[contract.name].func;
 
-            verify = verificationParams[contract.name].func;
+            // Extract contract addresses from deployment json
+            const authorizationGuardContr = contractDeployment.contracts.find((contractObj) => contractObj.name === 'AuthorizationGuard');
+            const feesManagerContr = contractDeployment.contracts.find((contractObj) => contractObj.name === 'FeesManager');
+            const tokenManager = contractDeployment.contracts.find((contractObj) => contractObj.name === 'TokenManager');
+            const multisigValidationContr = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MultiSigValidation');
+            const metalToken = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MetalToken');
+            const tokenFactory = contractDeployment.contracts.find((contractObj) => contractObj.name === 'TokenFactory');
+            const metalBeaconToken = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MetalToken');
+
+            console.log(`************** Starting verification for ${contract.name}**************`)
 
             switch (contract.name) {
                 case 'AuthorizationGuard':
-                    const tokenManager = contractDeployment.contracts.find((contractObj) => contractObj.name === 'TokenManager');
-                    console.log(`[Verify AuthorizationGuard]: Retrieved token manager:`, tokenManager)
                     await verify(contract.address, tokenManager?.address);
                     break;
                 case 'MultiSigValidation':
-                    const authorizationGuard = contractDeployment.contracts.find((contractObj) => contractObj.name === 'AuthorizationGuard')
-                    await verify(contract.address, authorizationGuard?.address);
+                    await verify(contract.address, authorizationGuardContr?.address);
                     break;
 
                 case 'TokenManager':
-                    const tokenFactory = contractDeployment.contracts.find((contractObj) => contractObj.name === 'TokenFactory');
-                    const feesManager = contractDeployment.contracts.find((contractObj) => contractObj.name === 'FeesManager');
-                    const multisigValidation = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MultiSigValidation');
-                    const authorizationGuardAddress = contractDeployment.contracts.find((contractObj) => contractObj.name === 'AuthorizationGuard');
-
-                    console.log(`)Token factory address:`, tokenFactory)
-                    console.log(`)Fees manager address:`, feesManager)
-                    await verify(contract.address, tokenFactory?.address, feesManager?.address, multisigValidation?.address, authorizationGuardAddress?.address);
+                    await verify(contract.address, tokenFactory?.address, feesManagerContr?.address, multisigValidationContr?.address, authorizationGuardContr?.address);
                     break;
 
                 case 'TokenFactory':
-                    const feesManagerContr = contractDeployment.contracts.find((contractObj) => contractObj.name === 'FeesManager');
-                    const authorizationGuardContr = contractDeployment.contracts.find((contractObj) => contractObj.name === 'AuthorizationGuard');
-                    const metalBeaconToken = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MetalToken');
-                    console.log(`Verifying tokenfactory)()()()()()()`, {
-                        feesManagerContr, authorizationGuardContr, metalBeaconToken
-                    })
-
-                    await verify(contract.address, feesManagerContr?.address, authorizationGuardContr?.address, metalBeaconToken?.address);
+                    await verify(contract.address, feesManagerContr?.address, authorizationGuardContr?.address, metalBeaconToken?.address, deployerAddress);
                     break;
 
                 case 'MetalToken':
-                    // const feesManagerAddress = contractDeployment.contracts.find((contractObj) => contractObj.name === 'FeesManager');
-                    // await verify(contract.address, feesManager?.address, authorizationGuardAddress?.address, feesManagerAddress?.address);
-
+                    await verify(tokenFactory?.address, deployerAddress, feesManagerContr?.address, authorizationGuardContr?.address, deployerAddress);
                     break;
+
                 case 'GoldToken':
-                    verify = verificationParams['MetalToken'].func;
-                    const feesManagerAddress = contractDeployment.contracts.find((contractObj) => contractObj.name === 'FeesManager');
-                    const metalToken = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MetalToken');
-                    const authorizationGuardContractAddress = contractDeployment.contracts.find((contractObj) => contractObj.name === 'AuthorizationGuard');
-                    const tokenFactoryContr = contractDeployment.contracts.find((contractObj) => contractObj.name === 'TokenFactory');
-
-                    await verify(contract.address, feesManagerAddress?.address, authorizationGuardContractAddress?.address, tokenFactoryContr?.address, 0);
+                    console.log(`GoldToken is verified by MetalToken case.`)
                     break;
+
                 case 'SilverToken':
-                    verify = verificationParams['MetalToken'].func;
-
-                    const feesManagerContract = contractDeployment.contracts.find((contractObj) => contractObj.name === 'FeesManager');
-                    const metalTokenAddress = contractDeployment.contracts.find((contractObj) => contractObj.name === 'MetalToken');
-                    const authorizationGuardContract = contractDeployment.contracts.find((contractObj) => contractObj.name === 'AuthorizationGuard');
-                    const tokenFactoryContrAddress = contractDeployment.contracts.find((contractObj) => contractObj.name === 'TokenFactory');
-
-                    await verify(contract.address, feesManagerContract?.address, authorizationGuardContract?.address, tokenFactoryContrAddress?.address, 1);
+                    console.log(`SilverToken is verified by MetalToken case.`)
                     break;
-                default:
-                    console.log(`************** Starting verif for ${contract.name}`)
-                    await verify(contract.address);
 
+                default:
+                    await verify(contract.address);
                     break;
             }
 
             console.log(`Verified! ${contract.name} ${contract.address}`);
-
         }
 
     } catch (error) {

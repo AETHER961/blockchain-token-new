@@ -79,35 +79,35 @@
             "contracts": [
                 {
                     "name": "MetalToken",
-                    "address": "0x93bE507f4DF16A61CDA79746740628f67aE3DB03"
+                    "address": "0x422F7636894E555a5aaA23Ef0CE31a4555821573"
                 },
                 {
                     "name": "FeesManager",
-                    "address": "0xd24eB95045fF16a5c33c83EDBdC070553AeB32D1"
+                    "address": "0xA6CDa450858CC078e512A17FC89835d65DEA7006"
                 },
                 {
                     "name": "TokenFactory",
-                    "address": "0x27D6F180bae85a84Cb0C38300aeDf39F76f6C73a"
+                    "address": "0x43859834ce06c649A52e2717a48EF86Af45dE1Ac"
                 },
                 {
                     "name": "TokenManager",
-                    "address": "0xF630ffb70f3910B7386C576Da17bB654C4A9D605"
+                    "address": "0x1d4BFb8AEB876b271B080D9B6cA0431e082C61dD"
                 },
                 {
                     "name": "GoldToken",
-                    "address": "0x42f2F880602820c0cf9A6678788b12D81c966614"
+                    "address": "0xaEc2221B11effF74e7bf2D68985411c2080d36eF"
                 },
                 {
                     "name": "SilverToken",
-                    "address": "0xc48D034bB5C58C2812837Ed082888cFb7f500528"
+                    "address": "0x323f1E0f86102C45Cd68ef6aA640e7B2beb0f560"
                 },
                 {
                     "name": "AuthorizationGuard",
-                    "address": "0x1ca05F974eC84D680ed92231ef5Be6Cf61b7a44a"
+                    "address": "0x21B672a3d63C0267e4C88f6E33E7a3319427EDEc"
                 },
                 {
                     "name": "MultiSigValidation",
-                    "address": "0x5e8065D0525D6756FdbB331b3308abB4030165fb"
+                    "address": "0xe7bE5FE47d4eB5d765390b7FE3735aAc7f7b3DE9"
                 }
             ]
         },

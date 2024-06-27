@@ -26,7 +26,9 @@ export async function main(contractAddress: string, tokenManager: string) {
             ],
         });
         console.log("Contract verified successfully");
+        return true;
     } catch (error) {
         console.error("Verification failed:", error);
+        return false;
     }
 }

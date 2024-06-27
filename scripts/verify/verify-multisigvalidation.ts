@@ -16,22 +16,6 @@ export async function main(contractAddress: string, authorizationGuardAddress: s
         { signerAddress: "0xff7774DC7FB785e41F5C0e04AF7db78897dC131f", roleName: "Auditor", operationType: 1 },
     ];
 
-
-    // const signers = [
-    //     "0xCBA19FC71b5C474e6726D18e7Ab380aea7eA64fD",
-    //     "0x56FcBC342D35ce908201407CA9cE6620BCcc4d9C",
-    //     "0xC415B176F90C46EFe64dCB2608DF5394Aa36C49C",
-    //     "0xff7774DC7FB785e41F5C0e04AF7db78897dC131f",
-    // ];
-
-
-    // const roles = [
-    //     "Warehouse admin",
-    //     "Director",
-    //     "Token manager",
-    //     "Auditor",
-    // ];
-
     try {
         console.log(`verify multisig:`, {
             authorizationGuardAddress,
@@ -47,8 +31,10 @@ export async function main(contractAddress: string, authorizationGuardAddress: s
             ],
         });
         console.log("Contract verified successfully");
+        return true;
     } catch (error) {
         console.error("Verification failed:", error);
+        return false;
     }
 }
 

@@ -1,0 +1,37 @@
+{
+    "network": "sepolia",
+    "contracts": [
+        {
+            "name": "MetalToken",
+            "address": "0x93bE507f4DF16A61CDA79746740628f67aE3DB03"
+        },
+        {
+            "name": "FeesManager",
+            "address": "0xd24eB95045fF16a5c33c83EDBdC070553AeB32D1"
+        },
+        {
+            "name": "TokenFactory",
+            "address": "0x27D6F180bae85a84Cb0C38300aeDf39F76f6C73a"
+        },
+        {
+            "name": "TokenManager",
+            "address": "0xF630ffb70f3910B7386C576Da17bB654C4A9D605"
+        },
+        {
+            "name": "GoldToken",
+            "address": "0x42f2F880602820c0cf9A6678788b12D81c966614"
+        },
+        {
+            "name": "SilverToken",
+            "address": "0xc48D034bB5C58C2812837Ed082888cFb7f500528"
+        },
+        {
+            "name": "AuthorizationGuard",
+            "address": "0x1ca05F974eC84D680ed92231ef5Be6Cf61b7a44a"
+        },
+        {
+            "name": "MultiSigValidation",
+            "address": "0x5e8065D0525D6756FdbB331b3308abB4030165fb"
+        }
+    ]
+},
