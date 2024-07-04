@@ -32,6 +32,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     }
 
     mapping(TokenOpTypes.OpType => mapping(address => string)) public roles;
+    mapping(TokenOpTypes.OpType => mapping(uint256 => address)) public unsortedSignersRegistry;
     mapping(TokenOpTypes.OpType => uint256) public requiredSignatures;
 
     mapping(TokenOpTypes.OpType => mapping(bytes32 => mapping(address => bool))) public signatures;
@@ -69,9 +70,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
         require(_mintSigners.length > 0, "No mint signers specified");
         require(_releaseSigners.length > 0, "No release signers specified");
 
-        requiredSignatures[TokenOpTypes.OpType.MINT_OP] += _mintSigners.length;
         addSigners(_mintSigners);
-        requiredSignatures[TokenOpTypes.OpType.RELEASE_OP] += _releaseSigners.length;
         addSigners(_releaseSigners);
     }
 
@@ -145,7 +144,7 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     ) internal returns (bool) {
         require(
             signaturesArray.length == requiredSignatures[operationType],
-            "Not enough signatures"
+            "Invalid number of signatures"
         );
 
         require(!usedHashes[_hash], "Hash has already been used for minting");
@@ -171,6 +170,20 @@ contract MultiSigValidation is AuthorizationGuardAccess {
 
         emit SignatureValidated(msg.sender, operationType, _hash, signaturesArray);
         return true;
+    }
+
+    /**
+     * @dev Returns the list of signers for a given operation type
+     * @param operationType The type of operation to sign by signers group (0 for mint, 1 for release)
+     */
+    function getSignerRegistry(
+        TokenOpTypes.OpType operationType
+    ) public view returns (address[] memory) {
+        address[] memory signersGroup = new address[](requiredSignatures[operationType]);
+        for (uint256 i = 0; i < requiredSignatures[operationType]; i++) {
+            signersGroup[i] = unsortedSignersRegistry[operationType][i];
+        }
+        return signersGroup;
     }
 
     /**
@@ -202,13 +215,21 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     }
 
     /**
-     * @dev Adds new signers to the roles mapping.
+     * @dev Adds new signers to the roles mapping and adds it to the signers registry.
      * @param signers Array of signers to be added.
      */
     function addSigners(SignerEntity[] memory signers) public onlyAdminAccess {
         for (uint32 i = 0; i < signers.length; i++) {
+            require(signers[i].signerAddress != address(0), "Invalid address");
             if (!isSigner(signers[i].signerAddress, signers[i].operationType)) {
-                roles[signers[i].operationType][signers[i].signerAddress] = signers[i].roleName;
+                // Add signer address to registry list
+                bool isRegistered = registerSigner(
+                    signers[i].signerAddress,
+                    signers[i].roleName,
+                    signers[i].operationType
+                );
+                require(isRegistered, "Failed to register signer");
+
                 emit SignerAdded(
                     signers[i].roleName,
                     signers[i].signerAddress,
@@ -219,13 +240,19 @@ contract MultiSigValidation is AuthorizationGuardAccess {
     }
 
     /**
-     * @dev Removes signers from the roles mapping.
+     * @dev Removes signers from the roles mapping and deregisters it from the signers registry.
      * @param signers Array of signers to be removed.
      */
     function removeSigners(SignerEntity[] memory signers) public onlyAdminAccess {
         for (uint32 i = 0; i < signers.length; i++) {
             if (isSigner(signers[i].signerAddress, signers[i].operationType)) {
-                roles[signers[i].operationType][signers[i].signerAddress] = "";
+                bool isDeregistered = deregisterSigner(
+                    signers[i].signerAddress,
+                    signers[i].operationType
+                );
+
+                require(isDeregistered, "Failed to deregister signer");
+
                 emit SignerRemoved(
                     signers[i].roleName,
                     signers[i].signerAddress,
@@ -233,6 +260,67 @@ contract MultiSigValidation is AuthorizationGuardAccess {
                 );
             }
         }
+    }
+
+    /**
+     * @dev Add role for signers and add signer to the specified group (registry)
+     * @param newSigner The address of the new signer
+     * @param roleName The name of the role held by the new signer
+     * @param operationType The type of operation to sign by signers group (0 for mint, 1 for release)
+     * @return bool Returns registration result as a boolean
+     */
+    function registerSigner(
+        address newSigner,
+        string memory roleName,
+        TokenOpTypes.OpType operationType
+    ) internal returns (bool) {
+        unsortedSignersRegistry[operationType][requiredSignatures[operationType]] = newSigner;
+        requiredSignatures[operationType] += 1;
+
+        roles[operationType][newSigner] = roleName;
+
+        return true;
+    }
+
+    /**
+     * @dev Remove role for signers and remove signer from the specified group (registry)
+     * @param targetSigner The current signer address to deregister
+     * @param operationType The type of operation to sign by signers group (0 for mint, 1 for release)
+     * @return bool Returns deregistration result as a boolean
+     */
+    function deregisterSigner(
+        address targetSigner,
+        TokenOpTypes.OpType operationType
+    ) internal returns (bool) {
+        require(requiredSignatures[operationType] > 0, "No signers for this operation");
+
+        uint256 signersLength = requiredSignatures[operationType];
+        for (uint256 i = 0; i < signersLength; i++) {
+            address existingSigner = unsortedSignersRegistry[operationType][i];
+
+            if (existingSigner == targetSigner) {
+                // Check if match is at the end of the hypothetical list
+                if (i == signersLength - 1) {
+                    // Delete the last address in the list
+                    unsortedSignersRegistry[operationType][i] = address(0);
+                } else {
+                    // Match is somewhere not at the end
+                    // Copy the address to delete to the end of the list
+                    unsortedSignersRegistry[operationType][i] = unsortedSignersRegistry[
+                        operationType
+                    ][signersLength - 1];
+                }
+
+                // Update required signers count for the operation
+                requiredSignatures[operationType] -= 1;
+
+                // Clear role for wallet address
+                roles[operationType][targetSigner] = "";
+
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -250,11 +338,29 @@ contract MultiSigValidation is AuthorizationGuardAccess {
                 "New signer is already a signer"
             );
 
-            roles[updateInstructions[i].operationType][updateInstructions[i].newSigner] = roles[
-                updateInstructions[i].operationType
-            ][updateInstructions[i].currentSigner];
+            string memory roleName = roles[updateInstructions[i].operationType][
+                updateInstructions[i].currentSigner
+            ];
 
-            roles[updateInstructions[i].operationType][updateInstructions[i].currentSigner] = "";
+            bool isDeregistered = deregisterSigner(
+                updateInstructions[i].currentSigner,
+                updateInstructions[i].operationType
+            );
+
+            require(isDeregistered, "Failed to deregister current signer");
+
+            bool isRegistered = registerSigner(
+                updateInstructions[i].newSigner,
+                roleName,
+                updateInstructions[i].operationType
+            );
+            require(isRegistered, "Failed to register new signer");
+
+            // roles[updateInstructions[i].operationType][updateInstructions[i].newSigner] = roles[
+            //     updateInstructions[i].operationType
+            // ][updateInstructions[i].currentSigner];
+
+            // roles[updateInstructions[i].operationType][updateInstructions[i].currentSigner] = "";
 
             emit SignerUpdated(
                 roles[updateInstructions[i].operationType][updateInstructions[i].newSigner],
